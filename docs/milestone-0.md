@@ -204,3 +204,73 @@ Prototype uses `data-panel` + `hidden`. Radix Tabs uses `data-state="active"`. T
 7. Issues 7, 14, 15 (Radix port specifics) — together
 8. Issue 9 (missing primitives) — scope decision
 9. Issues 10, 11, 12, 13, 16 — quick decisions
+
+---
+
+## Decisions (2026-05-15)
+
+The shadow catalog audit found that the "many tuned-per-component shadows" reduce to **10 distinct reactive signatures** — the rest are byte-for-byte duplicates from copy-paste (no helper existed). Consolidated keys:
+
+| Key | Used by |
+|---|---|
+| `card` | `.card`, `.stat`, `.lockcard` |
+| `card-hover` | `.card.is-hover-lift:hover`, `.stat:hover` |
+| `badge` | `.badge`, `.user-pill:hover` |
+| `avatar` | `.avatar` (hardcoded white/black α insets) |
+| `btn` | `.btn`, `.icon-btn` (default + focus base) |
+| `btn-hover` | `.btn:hover`, `.icon-btn:hover` |
+| `btn-pressed` | `.btn:active`, `.icon-btn:active` |
+| `swatch` | `.swatch` (hardcoded insets) |
+| `switch-thumb` | `.switch-thumb` (no spread) |
+| `tooltip` | `[data-tooltip]::after` (cast-only, no insets) |
+
+**1. `baskShadow()` API** — Option (a) rich enum, with two composition flags:
+```ts
+type ShadowKey = 'card' | 'card-hover' | 'badge' | 'avatar' | 'swatch'
+              | 'btn' | 'btn-hover' | 'btn-pressed'
+              | 'switch-thumb' | 'tooltip';
+baskShadow(key: ShadowKey, opts?: { focusRing?: boolean; inkRing?: boolean }): string
+```
+`focusRing: true` appends `var(--ring)`; `inkRing: true` prepends `0 0 0 2px var(--ink)` (only `swatch.is-active` uses this). `avatar` and `swatch` are kept split — structurally similar but cast geometry differs enough that merging hurts readability.
+
+**2. Hover handling** — Option (a): component owns both shadow strings; hover swap happens via a CSS-module `&:hover { box-shadow: … }` rule that re-inlines `baskShadow('card-hover')`. No React hover state needed.
+
+**3. Motion provider opt-in** — Option (b): ref registration via context. `useBaskTilt(ref)` inside reactive components; provider keeps a `Set<HTMLElement>`. No DOM querying, no `MutationObserver`.
+
+**4. `MutationObserver` cost** — Resolved by 3(b). No observer needed.
+
+**5. Focus ring composition** — Baked into `baskShadow()` via `focusRing` option (see issue 1). Single API, can't forget. Same modifier handles `inkRing` for swatch.
+
+**6. `@property` placement** — When porting `tokens.css` into `globals.css`, keep `@property --tilt-x` / `@property --tilt-y` declarations **outside** any `@layer` block. Tailwind v4's layer ordering will silently break the registrations otherwise. Add an inline `/* DO NOT MOVE INTO @layer */` comment in `globals.css` at the registrations.
+
+**7. Radix port visual contract** — Replicate per the issue:
+- DropdownMenu: panel at `--elev-3`, 6px padding, `min-width: 200px`, open animation `translateY(-6px) scale(.98)` → identity, keyed off `data-state="open"`.
+- Dialog: overlay `rgba(50,38,16,0.42)` + `backdrop-filter: blur(8px) saturate(130%)` — confirm blur survives the portal layer during the milestone-1 spike.
+- Tooltip: dark pill (`var(--ink)` bg, light text), `<Tooltip.Arrow>` styled to match prototype's `::before`.
+- Sidebar user-pill: `side="top"` for upward open; animation origin flips with it.
+
+**8. shadcn shadow integration** — `cva` recipe path: emit a `class` whose CSS rule contains the parallax-bearing `box-shadow` directly (referencing `var(--tilt-x)` in the rule, not via `--elev-*`). Avoids the inline-`style` override footgun. Verify in a milestone-1 spike that Tailwind v4 + CSS-module rule with `var(--tilt-x)` invalidates correctly — the `@property` registration is what makes this work.
+
+**9. Missing primitives — in scope for v1:**
+- Combobox / search-with-filter (customers page header)
+- Toast / notification surface (for the `🔔` icon-button)
+- Bulk-action toolbar (multi-select on customers table)
+- Pagination (customers table)
+- Empty states (zero-data treatment)
+- Skeleton / loading state (beyond the `.line` placeholder)
+
+Deferred: image gallery / thumbnail row (product page can ship with a static lead image first).
+
+**10. Press feedback** — Keep CSS `:active` only. Mouse-only press feedback is acceptable; no JS-managed `data-pressed` state.
+
+**11. Tinted icon backgrounds vs. badges** — Intent is genuinely different. `--*-soft` (badge bg) and `--tint-*` (icon-tile bg) become two separate `cva` variant scales with distinct names. Document the split.
+
+**12. `is-hover-lift` semantics** — Make hover-lift the **default for clickable cards**. `<Card>` with an `onClick` / `asChild` to `<a>` / `<button>` gets `card-hover` automatically. Non-interactive cards stay at `card`.
+
+**13. Body background grain** — Place the `body::before` fixed pseudo-element in `globals.css`. It survives route transitions automatically since `globals.css` is loaded once at the root layout. No further action needed.
+
+**14. Reduced-motion** — Keep the global `* { transition: none !important }` kill for v1. Acceptable that Radix enter/exit transitions are also killed — reduced-motion users typically want this.
+
+**15. Tab system under Radix** — Confirmed compatible. `.tab.is-active` uses static `var(--elev-1)` (no parallax), so the cva translation is mechanical: swap `.is-active` → `[data-state="active"]` selector. Recessed track (`var(--elev-inset)`) is also static. No reactive-shadow concerns.
+
+**16. `:has()` browser support** — Modern evergreens only. No fallback needed. Document the floor as Safari 15.4+, Firefox 121+, Chrome/Edge 105+.
