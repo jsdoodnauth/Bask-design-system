@@ -17,8 +17,11 @@
   inherits: true;
 }
 
+/* ============================================================
+   THEME: dusk (default — warm cream, carved)
+   ============================================================ */
 :root {
-  /* ---------- Surface palette (warm cream) ---------- */
+  /* ---------- Surface palette ---------- */
   --bg:           #EFE7D8;   /* page */
   --bg-deep:      #E4D9C5;   /* shadow-rim, recessed areas */
   --surface:      #FBF6EB;   /* raised card face */
@@ -72,6 +75,10 @@
   --tint-violet:  #EAE3FB;
   --tint-orange:  #FBE0C7;
 
+  /* ---------- Page grain (radial backdrop gradients) ---------- */
+  --grain-top:    rgba(255, 255, 255, 0.55);
+  --grain-bottom: rgba(60, 40, 10, 0.06);
+
   /* ---------- Focus ring (soft glow, matches carved aesthetic) ---------- */
   --ring-color: rgba(60, 91, 255, 0.40);
   --ring:
@@ -84,51 +91,166 @@
   --dur:      220ms;
 
   /* ---------- PARALLAX / LIGHT DIRECTION ----------
-     Proximity-light model. Each elevated element computes its
-     own distance to the cursor and writes --tilt-x / --tilt-y
-     scaled by an influence factor that falls off smoothly with
-     distance. Near the cursor → strong response. Far away →
-     stays still at gravity. The cursor is a real light source
-     with a falloff radius — quiet across the page, precise
-     under the pointer. */
+     Proximity-light model. Each elevated element measures its own
+     distance to the cursor and writes --tilt-x / --tilt-y scaled by
+     an influence factor that falls off smoothly with distance. */
   --tilt-x: 0;
   --tilt-y: 0;
 
+  /* ---------- Shadow primitives (themeable) ----------
+     RGB tuples + per-channel alpha scales. Carved surfaces call
+     these via rgb(var(--hi-rgb) / calc(A * var(--hi-scale))) so a
+     single theme override remaps every shadow at once.
+       hi   — inset top-edge highlight
+       lo   — inset bottom-edge shade
+       cast — drop shadow (the parallax-aware cast)
+     Saturated color variants (btn-primary, badges, avatars) keep
+     literal rgba — the inset on a solid color is theme-independent.
+  */
+  --hi-rgb:     255 255 255;
+  --hi-scale:   1;
+  --lo-rgb:     0 0 0;
+  --lo-scale:   1;
+  --cast-rgb:   60 40 10;
+  --cast-scale: 1;
+
+  --tooltip-cast:   rgb(20 14 5 / 0.40);
+  --modal-backdrop: rgba(50, 38, 16, 0.42);
+
   /* ---------- Elevations (carved / embossed) ----------
-     The cast-shadow offsets reference var(--tilt-x) / var(--tilt-y)
+     Cast-shadow offsets reference var(--tilt-x) / var(--tilt-y)
      DIRECTLY (no intermediate --lx/--ly) so substitution happens at
-     the element using the shadow, not at :root where the formula
-     would bake to 0. Gravity bias on the y-cast is +0.55.
+     the element. Gravity bias on the y-cast is +0.55.
   */
 
   /* e1 — badges, table rows */
   --elev-1:
-    inset 0 1.5px 0 rgba(255,255,255,0.7),
-    inset 0 -1.5px 0 rgba(0,0,0,0.03),
-    calc(var(--tilt-x) * -4px) calc(8px + (0.55 - var(--tilt-y)) * 4px) 14px -6px rgba(60,40,10,0.18);
+    inset 0 1.5px 0 rgb(var(--hi-rgb) / calc(0.7 * var(--hi-scale))),
+    inset 0 -1.5px 0 rgb(var(--lo-rgb) / calc(0.03 * var(--lo-scale))),
+    calc(var(--tilt-x) * -4px) calc(8px + (0.55 - var(--tilt-y)) * 4px) 14px -6px rgb(var(--cast-rgb) / calc(0.18 * var(--cast-scale)));
 
   /* e2 — cards, primary surfaces */
   --elev-2:
-    inset 0 2px 0 rgba(255,255,255,0.8),
-    inset 0 -2px 0 rgba(0,0,0,0.04),
-    calc(var(--tilt-x) * -8px) calc(14px + (0.55 - var(--tilt-y)) * 6px) 12px -8px rgba(60,40,10,0.2);
+    inset 0 2px 0 rgb(var(--hi-rgb) / calc(0.8 * var(--hi-scale))),
+    inset 0 -2px 0 rgb(var(--lo-rgb) / calc(0.04 * var(--lo-scale))),
+    calc(var(--tilt-x) * -8px) calc(14px + (0.55 - var(--tilt-y)) * 6px) 12px -8px rgb(var(--cast-rgb) / calc(0.20 * var(--cast-scale)));
 
   /* e3 — floating panels, hovered cards */
   --elev-3:
-    inset 0 2.5px 0 rgba(255,255,255,0.9),
-    inset 0 -2px 0 rgba(0,0,0,0.05),
-    calc(var(--tilt-x) * -14px) calc(22px + (0.55 - var(--tilt-y)) * 10px) 34px -10px rgba(60,40,10,0.25);
+    inset 0 2.5px 0 rgb(var(--hi-rgb) / calc(0.9 * var(--hi-scale))),
+    inset 0 -2px 0 rgb(var(--lo-rgb) / calc(0.05 * var(--lo-scale))),
+    calc(var(--tilt-x) * -14px) calc(22px + (0.55 - var(--tilt-y)) * 10px) 34px -10px rgb(var(--cast-rgb) / calc(0.25 * var(--cast-scale)));
 
   /* e0 — pressed: cast collapses, top highlight dims */
   --elev-pressed:
-    inset 0 1px 0 rgba(255,255,255,0.4),
-    inset 0 -1px 0 rgba(0,0,0,0.05),
-    calc(var(--tilt-x) * -2px) calc(2px + (0.55 - var(--tilt-y)) * 1px) 6px -2px rgba(60,40,10,0.18);
+    inset 0 1px 0 rgb(var(--hi-rgb) / calc(0.4 * var(--hi-scale))),
+    inset 0 -1px 0 rgb(var(--lo-rgb) / calc(0.05 * var(--lo-scale))),
+    calc(var(--tilt-x) * -2px) calc(2px + (0.55 - var(--tilt-y)) * 1px) 6px -2px rgb(var(--cast-rgb) / calc(0.18 * var(--cast-scale)));
 
   /* Inset (recessed) — checkboxes, input wells */
   --elev-inset:
-    inset 0 2px 4px rgba(60,40,10,0.15),
-    inset 0 -1px 0 rgba(255,255,255,0.5);
+    inset 0 2px 4px rgb(var(--cast-rgb) / calc(0.15 * var(--cast-scale))),
+    inset 0 -1px 0 rgb(var(--hi-rgb) / calc(0.5 * var(--hi-scale)));
+}
+
+/* ============================================================
+   THEME: night (dark mode)
+   Deep warm browns. Cream ink. Cast switches to pure black (warm
+   brown cast disappears into a dark page); the inset top edge
+   becomes a soft cream-tinted highlight at low alpha — that lit
+   upper edge is the primary cue that carves the surface.
+   ============================================================ */
+[data-theme="night"] {
+  --bg:           #1A1610;
+  --bg-deep:      #100C08;
+  --surface:      #261F17;
+  --surface-2:    #1E1812;
+  --surface-3:    #2E2620;
+  --hairline:     rgba(255, 240, 210, 0.07);
+
+  --ink:          #F5EEDE;
+  --ink-2:        #BFB4A0;
+  --ink-3:        #8A7F6B;
+  --ink-inv:      #1E1A14;
+
+  /* Tints at low alpha so they read on a dark surface without
+     fighting the carved depth */
+  --tint-blue:    rgba(60, 91, 255, 0.20);
+  --tint-green:   rgba(46, 168, 106, 0.20);
+  --tint-amber:   rgba(232, 169, 59, 0.22);
+  --tint-red:     rgba(215, 72, 74, 0.22);
+  --tint-violet:  rgba(122, 91, 255, 0.22);
+  --tint-orange:  rgba(240, 138, 60, 0.22);
+
+  /* Soft accent surfaces (badges, lockcard icon, is-accent icon-btn,
+     nav-count, menu-item danger hover). In dusk these are opaque
+     pastels; in night they become alpha-tinted so they sit *in* the
+     dark surface rather than glowing on top of it. */
+  --blue-soft:    rgba(60, 91, 255, 0.18);
+  --green-soft:   rgba(46, 168, 106, 0.18);
+  --amber-soft:   rgba(232, 169, 59, 0.20);
+  --red-soft:     rgba(215, 72, 74, 0.18);
+  --violet-soft:  rgba(122, 91, 255, 0.22);
+  --orange-soft:  rgba(240, 138, 60, 0.20);
+
+  --grain-top:    rgba(255, 240, 210, 0.04);
+  --grain-bottom: rgba(0, 0, 0, 0.22);
+
+  --ring-color:   rgba(120, 145, 255, 0.55);
+
+  /* Carve primitives flip:
+     - hi: cream-tinted, very low alpha → soft lit upper edge
+     - lo: pure black, stronger          → deeper lower edge
+     - cast: pure black, stronger        → visible against dark page */
+  --hi-rgb:     255 240 210;
+  --hi-scale:   0.13;
+  --lo-rgb:     0 0 0;
+  --lo-scale:   7;
+  --cast-rgb:   0 0 0;
+  --cast-scale: 2.4;
+
+  --tooltip-cast:   rgb(0 0 0 / 0.65);
+  --modal-backdrop: rgba(0, 0, 0, 0.55);
+}
+
+/* Badge text colors: in dusk these are dark inks on light pastels;
+   in night the pastel becomes alpha-tinted dark, so the text needs
+   to switch to the bright accent to read. Brightened blue/red are
+   tuned for legibility on their respective tinted-dark surface. */
+[data-theme="night"] .badge.is-success { color: #5FD89A; }
+[data-theme="night"] .badge.is-warn    { color: #F5C36E; }
+[data-theme="night"] .badge.is-danger  { color: #F08688; }
+[data-theme="night"] .badge.is-info    { color: #8FA3FF; }
+[data-theme="night"] .badge.is-violet  { color: #B5A0FF; }
+
+/* ============================================================
+   HIGH-CONTRAST MODE
+   Honor `prefers-contrast: more`. Aim: keep the carved language
+   recognizable but make every boundary perceivable without relying
+   on shadow. We bump shadow scales, darken --surface-3 so it
+   reads as a distinct tile from --surface, darken muted text, and
+   thicken the hairline (components.css uses it to draw outline
+   borders on flat surfaces in this mode).
+   ============================================================ */
+@media (prefers-contrast: more) {
+  :root {
+    --hi-scale:   1.2;
+    --lo-scale:   2;
+    --cast-scale: 1.6;
+    --surface-3:  #F2E5C9;
+    --ink-3:      #4A4234;
+    --hairline:   rgba(60, 40, 10, 0.35);
+    --ring-color: rgba(60, 91, 255, 0.80);
+  }
+  [data-theme="night"] {
+    --hi-scale:   0.25;
+    --lo-scale:   10;
+    --cast-scale: 3.5;
+    --surface-3:  #3A3026;
+    --ink-3:      #D0C5B0;
+    --hairline:   rgba(255, 240, 210, 0.30);
+    --ring-color: rgba(120, 145, 255, 0.85);
+  }
 }
 
 /* Honor reduced motion */

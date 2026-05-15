@@ -9,6 +9,15 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="./tokens.css" />
 <link rel="stylesheet" href="./components.css" />
+<script>
+  /* Set theme before paint to avoid a flash on load */
+  (() => {
+    try {
+      const t = localStorage.getItem('bask-theme');
+      if (t === 'night') document.documentElement.setAttribute('data-theme', 'night');
+    } catch (_) {}
+  })();
+</script>
 </head>
 <body>
 <main class="page">
@@ -24,6 +33,7 @@
     <div class="row">
       <button class="icon-btn" aria-label="Settings" data-tooltip="Settings" data-tooltip-pos="bottom">⚙</button>
       <button class="icon-btn is-accent" aria-label="Notifications" data-tooltip="3 unread" data-tooltip-pos="bottom">🔔</button>
+      <button class="icon-btn" id="theme-toggle" aria-label="Toggle theme" data-tooltip="Toggle theme" data-tooltip-pos="bottom">🌙</button>
       <button class="btn btn-primary">New site</button>
     </div>
   </header>
@@ -334,15 +344,15 @@
         <div style="display:flex;flex-direction:column;gap:10px;">
           <label class="choice">
             <span class="radio"><input type="radio" name="theme" checked /><span class="radio-circle"></span></span>
-            <span><strong>Light</strong> <span class="muted" style="font-size:var(--fs-13);">— the carved cream you're seeing.</span></span>
+            <span><strong>Dusk</strong> <span class="muted" style="font-size:var(--fs-13);">— the carved cream default.</span></span>
+          </label>
+          <label class="choice">
+            <span class="radio"><input type="radio" name="theme" /><span class="radio-circle"></span></span>
+            <span><strong>Night</strong> <span class="muted" style="font-size:var(--fs-13);">— deep warm browns, cream ink.</span></span>
           </label>
           <label class="choice">
             <span class="radio"><input type="radio" name="theme" /><span class="radio-circle"></span></span>
             <span><strong>System</strong> <span class="muted" style="font-size:var(--fs-13);">— follow OS preference.</span></span>
-          </label>
-          <label class="choice">
-            <span class="radio"><input type="radio" name="theme" disabled /><span class="radio-circle"></span></span>
-            <span><strong>Dark</strong> <span class="muted" style="font-size:var(--fs-13);">— coming soon.</span></span>
           </label>
         </div>
 
@@ -909,6 +919,32 @@
     dlg.addEventListener('click', (e) => {
       if (e.target === dlg) dlg.close();
     });
+  });
+})();
+
+/* ============================================================
+   THEME TOGGLE — dusk (default) ↔ night
+   ============================================================ */
+(() => {
+  const toggle = document.getElementById('theme-toggle');
+  if (!toggle) return;
+
+  const sync = () => {
+    const isNight = document.documentElement.getAttribute('data-theme') === 'night';
+    toggle.textContent = isNight ? '☀' : '🌙';
+    toggle.setAttribute('data-tooltip', isNight ? 'Switch to dusk' : 'Switch to night');
+  };
+  sync();
+
+  toggle.addEventListener('click', () => {
+    const next = document.documentElement.getAttribute('data-theme') === 'night' ? null : 'night';
+    if (next) {
+      document.documentElement.setAttribute('data-theme', next);
+    } else {
+      document.documentElement.removeAttribute('data-theme');
+    }
+    try { localStorage.setItem('bask-theme', next || 'dusk'); } catch (_) {}
+    sync();
   });
 })();
 
