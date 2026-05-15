@@ -19,8 +19,8 @@ body::before {
   content: "";
   position: fixed; inset: 0; pointer-events: none; z-index: -1;
   background:
-    radial-gradient(1200px 800px at 20% 0%, rgba(255,255,255,0.55), transparent 60%),
-    radial-gradient(900px  700px at 100% 100%, rgba(60,40,10,0.06), transparent 60%);
+    radial-gradient(1200px 800px at 20% 0%, var(--grain-top), transparent 60%),
+    radial-gradient(900px  700px at 100% 100%, var(--grain-bottom), transparent 60%);
 }
 
 .page {
@@ -75,17 +75,17 @@ h3 { font-size: var(--fs-16); font-weight: 600; letter-spacing: -0.01em; }
   border-radius: var(--r-lg);
   padding: 20px;
   box-shadow:
-    inset 0 2px 0 rgba(255,255,255,0.8),
-    inset 0 -2px 0 rgba(0,0,0,0.04),
-    calc(var(--tilt-x) * -8px) calc(14px + (0.55 - var(--tilt-y)) * 6px) 12px -8px rgba(60,40,10,0.2);
+    inset 0 2px 0 rgb(var(--hi-rgb) / calc(0.8 * var(--hi-scale))),
+    inset 0 -2px 0 rgb(var(--lo-rgb) / calc(0.04 * var(--lo-scale))),
+    calc(var(--tilt-x) * -8px) calc(14px + (0.55 - var(--tilt-y)) * 6px) 12px -8px rgb(var(--cast-rgb) / calc(0.20 * var(--cast-scale)));
   transition: box-shadow var(--dur) var(--ease);
   will-change: box-shadow;
 }
 .card.is-hover-lift:hover {
   box-shadow:
-    inset 0 2.5px 0 rgba(255,255,255,0.9),
-    inset 0 -2px 0 rgba(0,0,0,0.05),
-    calc(var(--tilt-x) * -14px) calc(22px + (0.55 - var(--tilt-y)) * 10px) 34px -10px rgba(60,40,10,0.25);
+    inset 0 2.5px 0 rgb(var(--hi-rgb) / calc(0.9 * var(--hi-scale))),
+    inset 0 -2px 0 rgb(var(--lo-rgb) / calc(0.05 * var(--lo-scale))),
+    calc(var(--tilt-x) * -14px) calc(22px + (0.55 - var(--tilt-y)) * 10px) 34px -10px rgb(var(--cast-rgb) / calc(0.25 * var(--cast-scale)));
 }
 .card-xl { border-radius: var(--r-xl); padding: 28px; }
 
@@ -102,17 +102,17 @@ h3 { font-size: var(--fs-16); font-weight: 600; letter-spacing: -0.01em; }
   border-radius: var(--r-md);
   padding: 14px 16px;
   box-shadow:
-    inset 0 2px 0 rgba(255,255,255,0.8),
-    inset 0 -2px 0 rgba(0,0,0,0.04),
-    calc(var(--tilt-x) * -8px) calc(14px + (0.55 - var(--tilt-y)) * 6px) 12px -8px rgba(60,40,10,0.2);
+    inset 0 2px 0 rgb(var(--hi-rgb) / calc(0.8 * var(--hi-scale))),
+    inset 0 -2px 0 rgb(var(--lo-rgb) / calc(0.04 * var(--lo-scale))),
+    calc(var(--tilt-x) * -8px) calc(14px + (0.55 - var(--tilt-y)) * 6px) 12px -8px rgb(var(--cast-rgb) / calc(0.20 * var(--cast-scale)));
   display: flex; align-items: center; gap: 12px;
   transition: box-shadow var(--dur) var(--ease);
 }
 .stat:hover {
   box-shadow:
-    inset 0 2.5px 0 rgba(255,255,255,0.9),
-    inset 0 -2px 0 rgba(0,0,0,0.05),
-    calc(var(--tilt-x) * -14px) calc(22px + (0.55 - var(--tilt-y)) * 10px) 34px -10px rgba(60,40,10,0.25);
+    inset 0 2.5px 0 rgb(var(--hi-rgb) / calc(0.9 * var(--hi-scale))),
+    inset 0 -2px 0 rgb(var(--lo-rgb) / calc(0.05 * var(--lo-scale))),
+    calc(var(--tilt-x) * -14px) calc(22px + (0.55 - var(--tilt-y)) * 10px) 34px -10px rgb(var(--cast-rgb) / calc(0.25 * var(--cast-scale)));
 }
 .stat .stat-icon {
   width: 38px; height: 38px; border-radius: var(--r-sm);
@@ -144,9 +144,9 @@ h3 { font-size: var(--fs-16); font-weight: 600; letter-spacing: -0.01em; }
   background: var(--surface-3);
   color: var(--ink-2);
   box-shadow:
-    inset 0 1.5px 0 rgba(255,255,255,0.7),
-    inset 0 -1.5px 0 rgba(0,0,0,0.03),
-    calc(var(--tilt-x) * -4px) calc(8px + (0.55 - var(--tilt-y)) * 4px) 14px -6px rgba(60,40,10,0.18);
+    inset 0 1.5px 0 rgb(var(--hi-rgb) / calc(0.7 * var(--hi-scale))),
+    inset 0 -1.5px 0 rgb(var(--lo-rgb) / calc(0.03 * var(--lo-scale))),
+    calc(var(--tilt-x) * -4px) calc(8px + (0.55 - var(--tilt-y)) * 4px) 14px -6px rgb(var(--cast-rgb) / calc(0.18 * var(--cast-scale)));
   transition: box-shadow var(--dur) var(--ease), transform var(--dur) var(--ease);
 }
 .badge .dot {
@@ -178,7 +178,7 @@ h3 { font-size: var(--fs-16); font-weight: 600; letter-spacing: -0.01em; }
   box-shadow:
     inset 0 2px 0 rgba(255,255,255,0.28),
     inset 0 -2px 0 rgba(0,0,0,0.18),
-    calc(var(--tilt-x) * -5px) calc(8px + (0.55 - var(--tilt-y)) * 4px) 14px -4px rgba(60,40,10,0.30);
+    calc(var(--tilt-x) * -5px) calc(8px + (0.55 - var(--tilt-y)) * 4px) 14px -4px rgb(var(--cast-rgb) / calc(0.30 * var(--cast-scale)));
 }
 .avatar.is-green  { background: var(--green); }
 .avatar.is-violet { background: var(--violet); }
@@ -192,8 +192,14 @@ h3 { font-size: var(--fs-16); font-weight: 600; letter-spacing: -0.01em; }
 .btn {
   --btn-bg: var(--surface-3);
   --btn-ink: var(--ink);
-  --btn-hi: rgba(255,255,255,0.8);   /* inset top-edge highlight */
-  --btn-lo: rgba(0,0,0,0.04);        /* inset bottom-edge shade */
+  /* Default (cream-on-cream) btn flows through theme primitives.
+     Rim/cast alphas are bumped versus other carved surfaces (.card,
+     .stat) because a button-on-card sits in low-color-contrast
+     territory and needs the carve to do more affordance work.
+     Colored variants override --btn-hi / --btn-lo with literal rgba
+     because the inset on a saturated bg is theme-independent. */
+  --btn-hi: rgb(var(--hi-rgb) / calc(0.9 * var(--hi-scale)));
+  --btn-lo: rgb(var(--lo-rgb) / calc(0.07 * var(--lo-scale)));
   appearance: none; border: 0; cursor: pointer;
   font: inherit; font-weight: 600; font-size: var(--fs-14);
   color: var(--btn-ink);
@@ -203,7 +209,7 @@ h3 { font-size: var(--fs-16); font-weight: 600; letter-spacing: -0.01em; }
   box-shadow:
     inset 0 2px 0 var(--btn-hi),
     inset 0 -2px 0 var(--btn-lo),
-    calc(var(--tilt-x) * -8px) calc(14px + (0.55 - var(--tilt-y)) * 6px) 12px -8px rgba(60,40,10,0.2);
+    calc(var(--tilt-x) * -8px) calc(14px + (0.55 - var(--tilt-y)) * 6px) 12px -8px rgb(var(--cast-rgb) / calc(0.28 * var(--cast-scale)));
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
   transition:
     box-shadow var(--dur-fast) var(--ease),
@@ -211,19 +217,17 @@ h3 { font-size: var(--fs-16); font-weight: 600; letter-spacing: -0.01em; }
   will-change: box-shadow;
 }
 .btn:hover {
-  /* Subtle cast nudge — no size change perception */
   box-shadow:
     inset 0 2px 0 var(--btn-hi),
     inset 0 -2px 0 var(--btn-lo),
-    calc(var(--tilt-x) * -10px) calc(17px + (0.55 - var(--tilt-y)) * 7px) 16px -8px rgba(60,40,10,0.24);
+    calc(var(--tilt-x) * -10px) calc(17px + (0.55 - var(--tilt-y)) * 7px) 16px -8px rgb(var(--cast-rgb) / calc(0.34 * var(--cast-scale)));
 }
 .btn:active,
 .btn.is-pressed {
-  /* Cast collapses, top highlight dims — element stays in place */
   box-shadow:
     inset 0 1px 0 var(--btn-hi),
     inset 0 -1px 0 var(--btn-lo),
-    calc(var(--tilt-x) * -2px) calc(4px + (0.55 - var(--tilt-y)) * 1px) 6px -2px rgba(60,40,10,0.20);
+    calc(var(--tilt-x) * -2px) calc(4px + (0.55 - var(--tilt-y)) * 1px) 6px -2px rgb(var(--cast-rgb) / calc(0.22 * var(--cast-scale)));
   transition-duration: 80ms;
 }
 .btn:focus-visible {
@@ -231,7 +235,7 @@ h3 { font-size: var(--fs-16); font-weight: 600; letter-spacing: -0.01em; }
   box-shadow:
     inset 0 2px 0 var(--btn-hi),
     inset 0 -2px 0 var(--btn-lo),
-    calc(var(--tilt-x) * -8px) calc(14px + (0.55 - var(--tilt-y)) * 6px) 12px -8px rgba(60,40,10,0.2),
+    calc(var(--tilt-x) * -8px) calc(14px + (0.55 - var(--tilt-y)) * 6px) 12px -8px rgb(var(--cast-rgb) / calc(0.28 * var(--cast-scale))),
     var(--ring);
 }
 
@@ -248,8 +252,8 @@ h3 { font-size: var(--fs-16); font-weight: 600; letter-spacing: -0.01em; }
    ICON BUTTON
    ============================================================ */
 .icon-btn {
-  --btn-hi: rgba(255,255,255,0.8);
-  --btn-lo: rgba(0,0,0,0.04);
+  --btn-hi: rgb(var(--hi-rgb) / calc(0.9 * var(--hi-scale)));
+  --btn-lo: rgb(var(--lo-rgb) / calc(0.07 * var(--lo-scale)));
   width: 38px; height: 38px;
   border-radius: var(--r-sm);
   display: inline-grid; place-items: center;
@@ -259,20 +263,20 @@ h3 { font-size: var(--fs-16); font-weight: 600; letter-spacing: -0.01em; }
   box-shadow:
     inset 0 2px 0 var(--btn-hi),
     inset 0 -2px 0 var(--btn-lo),
-    calc(var(--tilt-x) * -8px) calc(14px + (0.55 - var(--tilt-y)) * 6px) 12px -8px rgba(60,40,10,0.2);
+    calc(var(--tilt-x) * -8px) calc(14px + (0.55 - var(--tilt-y)) * 6px) 12px -8px rgb(var(--cast-rgb) / calc(0.28 * var(--cast-scale)));
   transition: box-shadow var(--dur-fast) var(--ease);
 }
 .icon-btn:hover {
   box-shadow:
     inset 0 2px 0 var(--btn-hi),
     inset 0 -2px 0 var(--btn-lo),
-    calc(var(--tilt-x) * -10px) calc(17px + (0.55 - var(--tilt-y)) * 7px) 16px -8px rgba(60,40,10,0.24);
+    calc(var(--tilt-x) * -10px) calc(17px + (0.55 - var(--tilt-y)) * 7px) 16px -8px rgb(var(--cast-rgb) / calc(0.34 * var(--cast-scale)));
 }
 .icon-btn:active {
   box-shadow:
     inset 0 1px 0 var(--btn-hi),
     inset 0 -1px 0 var(--btn-lo),
-    calc(var(--tilt-x) * -2px) calc(4px + (0.55 - var(--tilt-y)) * 1px) 6px -2px rgba(60,40,10,0.20);
+    calc(var(--tilt-x) * -2px) calc(4px + (0.55 - var(--tilt-y)) * 1px) 6px -2px rgb(var(--cast-rgb) / calc(0.22 * var(--cast-scale)));
   transition-duration: 80ms;
 }
 .icon-btn:focus-visible {
@@ -280,7 +284,7 @@ h3 { font-size: var(--fs-16); font-weight: 600; letter-spacing: -0.01em; }
   box-shadow:
     inset 0 2px 0 var(--btn-hi),
     inset 0 -2px 0 var(--btn-lo),
-    calc(var(--tilt-x) * -8px) calc(14px + (0.55 - var(--tilt-y)) * 6px) 12px -8px rgba(60,40,10,0.2),
+    calc(var(--tilt-x) * -8px) calc(14px + (0.55 - var(--tilt-y)) * 6px) 12px -8px rgb(var(--cast-rgb) / calc(0.28 * var(--cast-scale))),
     var(--ring);
 }
 
@@ -340,7 +344,7 @@ h3 { font-size: var(--fs-16); font-weight: 600; letter-spacing: -0.01em; }
   box-shadow:
     inset 0 2px 0 rgba(255,255,255,0.32),
     inset 0 -2px 0 rgba(0,0,0,0.15),
-    calc(var(--tilt-x) * -4px) calc(6px + (0.55 - var(--tilt-y)) * 3px) 12px -4px rgba(60,40,10,0.28);
+    calc(var(--tilt-x) * -4px) calc(6px + (0.55 - var(--tilt-y)) * 3px) 12px -4px rgb(var(--cast-rgb) / calc(0.28 * var(--cast-scale)));
   transition: transform var(--dur) var(--ease);
 }
 .swatch.is-active {
@@ -350,7 +354,7 @@ h3 { font-size: var(--fs-16); font-weight: 600; letter-spacing: -0.01em; }
     0 0 0 2px var(--ink),
     inset 0 2px 0 rgba(255,255,255,0.32),
     inset 0 -2px 0 rgba(0,0,0,0.15),
-    calc(var(--tilt-x) * -4px) calc(6px + (0.55 - var(--tilt-y)) * 3px) 12px -4px rgba(60,40,10,0.28);
+    calc(var(--tilt-x) * -4px) calc(6px + (0.55 - var(--tilt-y)) * 3px) 12px -4px rgb(var(--cast-rgb) / calc(0.28 * var(--cast-scale)));
 }
 
 /* ============================================================
@@ -362,9 +366,9 @@ h3 { font-size: var(--fs-16); font-weight: 600; letter-spacing: -0.01em; }
   padding: 22px;
   text-align: center;
   box-shadow:
-    inset 0 2px 0 rgba(255,255,255,0.8),
-    inset 0 -2px 0 rgba(0,0,0,0.04),
-    calc(var(--tilt-x) * -8px) calc(14px + (0.55 - var(--tilt-y)) * 6px) 12px -8px rgba(60,40,10,0.2);
+    inset 0 2px 0 rgb(var(--hi-rgb) / calc(0.8 * var(--hi-scale))),
+    inset 0 -2px 0 rgb(var(--lo-rgb) / calc(0.04 * var(--lo-scale))),
+    calc(var(--tilt-x) * -8px) calc(14px + (0.55 - var(--tilt-y)) * 6px) 12px -8px rgb(var(--cast-rgb) / calc(0.20 * var(--cast-scale)));
 }
 .lockcard .lock-icon {
   width: 44px; height: 44px; border-radius: var(--r-sm);
@@ -414,16 +418,16 @@ h3 { font-size: var(--fs-16); font-weight: 600; letter-spacing: -0.01em; }
 
 .input:hover, .textarea:hover, .select:hover {
   box-shadow:
-    inset 0 2px 5px rgba(60,40,10,0.20),
-    inset 0 -1px 0 rgba(255,255,255,0.55);
+    inset 0 2px 5px rgb(var(--cast-rgb) / calc(0.20 * var(--cast-scale))),
+    inset 0 -1px 0 rgb(var(--hi-rgb) / calc(0.55 * var(--hi-scale)));
 }
 
 .input:focus, .textarea:focus, .select:focus {
   outline: none;
   background-color: var(--surface-3);
   box-shadow:
-    inset 0 2px 4px rgba(60,40,10,0.15),
-    inset 0 -1px 0 rgba(255,255,255,0.6),
+    inset 0 2px 4px rgb(var(--cast-rgb) / calc(0.15 * var(--cast-scale))),
+    inset 0 -1px 0 rgb(var(--hi-rgb) / calc(0.6 * var(--hi-scale))),
     0 0 0 3px var(--ring-color);
 }
 
@@ -434,8 +438,8 @@ h3 { font-size: var(--fs-16); font-weight: 600; letter-spacing: -0.01em; }
 
 .input.is-error, .textarea.is-error, .select.is-error {
   box-shadow:
-    inset 0 2px 4px rgba(60,40,10,0.15),
-    inset 0 -1px 0 rgba(255,255,255,0.5),
+    inset 0 2px 4px rgb(var(--cast-rgb) / calc(0.15 * var(--cast-scale))),
+    inset 0 -1px 0 rgb(var(--hi-rgb) / calc(0.5 * var(--hi-scale))),
     0 0 0 2px rgba(215,72,74,0.45);
 }
 
@@ -485,9 +489,9 @@ h3 { font-size: var(--fs-16); font-weight: 600; letter-spacing: -0.01em; }
   border-radius: 50%;
   background: var(--surface-3);
   box-shadow:
-    inset 0 1.5px 0 rgba(255,255,255,0.9),
-    inset 0 -1px 0 rgba(0,0,0,0.10),
-    calc(var(--tilt-x) * -3px) calc(3px + (0.55 - var(--tilt-y)) * 2px) 5px rgba(60,40,10,0.28);
+    inset 0 1.5px 0 rgb(var(--hi-rgb) / calc(0.9 * var(--hi-scale))),
+    inset 0 -1px 0 rgb(var(--lo-rgb) / calc(0.10 * var(--lo-scale))),
+    calc(var(--tilt-x) * -3px) calc(3px + (0.55 - var(--tilt-y)) * 2px) 5px rgb(var(--cast-rgb) / calc(0.28 * var(--cast-scale)));
   transition: left var(--dur) var(--ease), background var(--dur) var(--ease);
 }
 .switch input:checked ~ .switch-track { background: var(--blue); }
@@ -624,7 +628,7 @@ h3 { font-size: var(--fs-16); font-weight: 600; letter-spacing: -0.01em; }
   white-space: nowrap;
   letter-spacing: 0;
   box-shadow:
-    calc(var(--tilt-x) * -4px) calc(6px + (0.55 - var(--tilt-y)) * 3px) 12px -2px rgba(20,14,5,0.40);
+    calc(var(--tilt-x) * -4px) calc(6px + (0.55 - var(--tilt-y)) * 3px) 12px -2px var(--tooltip-cast);
   pointer-events: none;
   opacity: 0;
   transition: opacity var(--dur-fast) var(--ease), transform var(--dur-fast) var(--ease);
@@ -745,7 +749,7 @@ h3 { font-size: var(--fs-16); font-weight: 600; letter-spacing: -0.01em; }
 }
 .modal[open] { animation: modal-in 240ms var(--ease); }
 .modal::backdrop {
-  background: rgba(50, 38, 16, 0.42);
+  background: var(--modal-backdrop);
   backdrop-filter: blur(8px) saturate(130%);
   -webkit-backdrop-filter: blur(8px) saturate(130%);
   animation: backdrop-in 240ms var(--ease);
@@ -874,9 +878,9 @@ h3 { font-size: var(--fs-16); font-weight: 600; letter-spacing: -0.01em; }
 .user-pill::marker { content: ""; }
 .user-pill:hover {
   box-shadow:
-    inset 0 1.5px 0 rgba(255,255,255,0.7),
-    inset 0 -1.5px 0 rgba(0,0,0,0.03),
-    calc(var(--tilt-x) * -4px) calc(8px + (0.55 - var(--tilt-y)) * 4px) 14px -6px rgba(60,40,10,0.18);
+    inset 0 1.5px 0 rgb(var(--hi-rgb) / calc(0.7 * var(--hi-scale))),
+    inset 0 -1.5px 0 rgb(var(--lo-rgb) / calc(0.03 * var(--lo-scale))),
+    calc(var(--tilt-x) * -4px) calc(8px + (0.55 - var(--tilt-y)) * 4px) 14px -6px rgb(var(--cast-rgb) / calc(0.18 * var(--cast-scale)));
 }
 .user-pill .user-meta { display: flex; flex-direction: column; flex: 1; min-width: 0; }
 .user-pill .user-name { font-size: var(--fs-13); font-weight: 600; color: var(--ink); }
@@ -1021,3 +1025,67 @@ h3 { font-size: var(--fs-16); font-weight: 600; letter-spacing: -0.01em; }
   font-size: 12px;
 }
 .activity-time { font-size: var(--fs-12); color: var(--ink-3); margin-top: 2px; }
+
+/* ============================================================
+   THEME SWATCH — small color circle used in the tone picker.
+   Backgrounds are hardcoded (theme-independent) so each chip
+   shows that tone's signature surface color regardless of the
+   currently active theme.
+   ============================================================ */
+.theme-swatch {
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  display: inline-block; flex-shrink: 0;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12);
+}
+.theme-swatch[data-tone="warm"]     { background: #FBF6EB; }
+.theme-swatch[data-tone="daylight"] { background: #F8F8F6; }
+.theme-swatch[data-tone="blue"]     { background: #DDE7F4; }
+.theme-swatch[data-tone="indigo"]   { background: #E1DCF3; }
+.theme-swatch[data-tone="amber"]    { background: #FBE6BE; }
+.theme-swatch[data-tone="emerald"]  { background: #D4ECDB; }
+
+/* Active state inside the tone dropdown menu — a small checkmark
+   on the right side. The trailing space holds layout when inactive. */
+.menu-item .menu-check {
+  margin-left: auto;
+  width: 14px;
+  text-align: center;
+  color: var(--ink-3);
+  opacity: 0;
+}
+.menu-item[aria-current="true"] .menu-check { opacity: 1; color: var(--ink); }
+
+/* ============================================================
+   HIGH-CONTRAST MODE
+   prefers-contrast: more — draw explicit boundaries on every flat
+   surface and control. Uses outline (no layout shift, no clash
+   with box-shadow-based carve or focus rings) sized to the thicker
+   hairline set in tokens.css. The carved aesthetic stays; this
+   adds an unambiguous edge for users who need it.
+   ============================================================ */
+@media (prefers-contrast: more) {
+  .card,
+  .stat,
+  .btn,
+  .icon-btn,
+  .badge,
+  .lockcard,
+  .table,
+  .stepper,
+  .modal,
+  .dropdown-menu,
+  .sidebar,
+  .user-pill,
+  .tabs,
+  .choice,
+  .input,
+  .textarea,
+  .select,
+  .switch-track,
+  .checkbox-box,
+  .radio-circle {
+    outline: 1px solid var(--hairline);
+    outline-offset: -1px;
+  }
+}

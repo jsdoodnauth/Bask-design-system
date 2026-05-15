@@ -24,9 +24,23 @@ Reference mocks live in `docs/mocks/` (PNG screenshots). The loose `index.html.h
 
 Checkboxes/radios/`.choice` invert when active — recessed → elevated. That inversion is the system's main interaction language.
 
-**Aesthetic.** "Carved" — single soft cast + subtle inset top-edge highlight + faint bottom-edge shade. Warm cream palette (no black backdrops; the modal uses a brown-tinted blur).
+**Aesthetic.** "Carved" — single soft cast + subtle inset top-edge highlight + faint bottom-edge shade. Warm cream is the default tone but the system is multi-tone (see below); modals never use pure black backdrops — each theme sets its own `--modal-backdrop`.
 
 **Typography.** Inter for body/UI, **Fraunces** (variable, serif) for `h1`/`h2`. Display tracking is tight (`-0.02em`).
+
+## Theming
+
+`data-theme="<tone>-<mode>"` on `<html>`. Tones: `warm` (default), `daylight`, `blue`, `indigo`, `amber`, `emerald`. Modes: `light`, `dark`. The default `warm-light` is represented by **absence** of the attribute — `:root` holds it. See `docs/themes-plan.md` for the design rationale.
+
+Structure of `tokens.css`:
+1. `:root` — `warm-light` palette + global tokens (radii, type, accents, shadow-primitive defaults, `--elev-*`).
+2. `[data-theme$="-dark"]` — universal dark overrides (shadow scales, soft-accent alphas, tints, modal backdrop, tooltip cast). Plus badge text colors via `[data-theme$="-dark"] .badge.is-*`.
+3. One block per theme (`[data-theme="warm-dark"]`, `[data-theme="blue-light"]`, etc.) — only the palette deltas for that theme (surfaces, ink, `--cast-rgb` for light variants, `--hi-rgb` for dark variants).
+4. `prefers-contrast: more` block — bumps shadow scales + thickens hairline + lifts each theme's `--surface-3` for clearer button/card separation.
+
+**To add a new theme**: write one `[data-theme="<tone>-<mode>"]` block with the palette deltas. Don't touch component CSS — every carved shadow already flows through `--hi-rgb` / `--lo-rgb` / `--cast-rgb` + scales. The same applies if you tweak existing theme values.
+
+**Light-variant gotcha**: no surface tier can be pure `#FFFFFF` — the inset top-edge highlight is white-at-alpha, so it vanishes against pure white. Keep `--surface-3` at most around `#FDFDFC` (or tinted off-white) and leave a visible luminance gap between adjacent tiers. The warm theme's `#FFFDF7` is the canonical reference.
 
 ## Motion model: **proximity-light parallax** (the critical, non-obvious part)
 
