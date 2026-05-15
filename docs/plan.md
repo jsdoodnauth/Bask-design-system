@@ -149,7 +149,7 @@ Buttons expose `--btn-hi` (top-edge inset highlight color) and `--btn-lo` (botto
 
 ## 6. Component port
 
-Each shadcn primitive is installed via `npx shadcn add`, then **the visual layer is overridden** — Radix behavior and a11y stay. The `bask/` folder holds composites that don't have a shadcn analogue.
+Each shadcn primitive is installed via `npx shadcn add`, then **the visual layer is overridden** — Radix behavior and a11y stay. The `bask-design-system/` folder holds composites that don't have a shadcn analogue.
 
 | shadcn primitive | Bask override                                                                 | In prototype |
 |------------------|-------------------------------------------------------------------------------|--------------|
