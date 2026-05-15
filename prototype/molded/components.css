@@ -1,0 +1,311 @@
+/* ============================================================
+   CLAY DESIGN SYSTEM — COMPONENTS
+   ============================================================ */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: var(--fs-14);
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Subtle paper-grain on page bg (gives shadows something to land on) */
+body::before {
+  content: "";
+  position: fixed; inset: 0; pointer-events: none; z-index: -1;
+  background:
+    radial-gradient(1200px 800px at 20% 0%, rgba(255,255,255,0.55), transparent 60%),
+    radial-gradient(900px  700px at 100% 100%, rgba(60,40,10,0.06), transparent 60%);
+}
+
+.page {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 56px 32px 96px;
+}
+
+h1, h2, h3 { margin: 0; letter-spacing: -0.01em; }
+h1 { font-size: var(--fs-36); font-weight: 700; }
+h2 { font-size: var(--fs-22); font-weight: 700; }
+h3 { font-size: var(--fs-16); font-weight: 600; }
+
+.eyebrow {
+  font-size: var(--fs-12);
+  font-weight: 700;
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.muted { color: var(--ink-3); }
+.section { margin-top: 56px; }
+.section > h2 { margin-bottom: 20px; }
+
+/* ---------- Grid helpers ---------- */
+.row { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; }
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+@media (max-width: 760px) {
+  .grid-4 { grid-template-columns: repeat(2, 1fr); }
+  .grid-3 { grid-template-columns: 1fr; }
+}
+
+/* ============================================================
+   CARD
+   ============================================================ */
+.card {
+  background: var(--surface);
+  border-radius: var(--r-lg);
+  padding: 20px;
+  box-shadow: var(--elev-2);
+  transition:
+    box-shadow var(--dur) var(--ease),
+    transform var(--dur) var(--ease);
+  will-change: box-shadow, transform;
+}
+.card.is-hover-lift:hover { box-shadow: var(--elev-3); transform: translateY(-2px); }
+.card-xl { border-radius: var(--r-xl); padding: 28px; }
+
+.card-header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 14px;
+}
+
+/* ============================================================
+   STAT TILE  (e.g. "Core Updates · 7")
+   ============================================================ */
+.stat {
+  background: var(--surface);
+  border-radius: var(--r-md);
+  padding: 14px 16px;
+  box-shadow: var(--elev-2);
+  display: flex; align-items: center; gap: 12px;
+  transition: box-shadow var(--dur) var(--ease), transform var(--dur) var(--ease);
+}
+.stat:hover { box-shadow: var(--elev-3); transform: translateY(-1px); }
+.stat .stat-icon {
+  width: 36px; height: 36px; border-radius: var(--r-sm);
+  display: grid; place-items: center;
+  background: var(--surface-3);
+  box-shadow: var(--elev-1);
+  flex: 0 0 auto;
+}
+.stat .stat-meta { display: flex; flex-direction: column; }
+.stat .stat-label { font-size: var(--fs-12); letter-spacing: var(--tracking-eyebrow); text-transform: uppercase; color: var(--ink-3); font-weight: 700; }
+.stat .stat-value { font-size: var(--fs-22); font-weight: 700; color: var(--ink); }
+
+/* ============================================================
+   BADGE / PILL
+   ============================================================ */
+.badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 5px 11px 6px;
+  border-radius: var(--r-pill);
+  font-size: var(--fs-13);
+  font-weight: 600;
+  background: var(--surface-3);
+  color: var(--ink-2);
+  box-shadow: var(--elev-1);
+  transition: box-shadow var(--dur) var(--ease), transform var(--dur) var(--ease);
+}
+.badge .dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--ink-3);
+  box-shadow: inset 0 -1px 0 rgba(0,0,0,0.15);
+}
+.badge.is-success { background: var(--green-soft); color: #1F6F47; }
+.badge.is-success .dot { background: var(--green); }
+.badge.is-warn    { background: var(--amber-soft); color: #8A5B0F; }
+.badge.is-warn    .dot { background: var(--amber); }
+.badge.is-danger  { background: var(--red-soft); color: #8E2426; }
+.badge.is-danger  .dot { background: var(--red); }
+.badge.is-info    { background: var(--blue-soft); color: #2238B5; }
+.badge.is-info    .dot { background: var(--blue); }
+.badge.is-violet  { background: var(--violet-soft); color: #4A38B5; }
+.badge.is-violet  .dot { background: var(--violet); }
+.badge.is-neutral { background: var(--surface-2); color: var(--ink-2); }
+
+/* ============================================================
+   AVATAR  (deep-shadow circle initials)
+   ============================================================ */
+.avatar {
+  width: 36px; height: 36px; border-radius: 50%;
+  display: grid; place-items: center;
+  color: white;
+  font-weight: 700; font-size: var(--fs-13);
+  background: var(--blue);
+  box-shadow:
+    calc(var(--lx) * 2px) calc(2px + var(--ly)*1px) 2px rgba(40,30,10,0.22),
+    calc(var(--lx) * 4px) calc(4px + var(--ly)*2px) 4px rgba(40,30,10,0.12),
+    inset 1.5px 1.5px 2px rgba(255,255,255,0.30),
+    inset -1px -2px 2px rgba(0,0,0,0.25);
+}
+.avatar.is-green  { background: var(--green); }
+.avatar.is-violet { background: var(--violet); }
+.avatar.is-amber  { background: var(--amber); }
+.avatar.is-red    { background: #9C3232; }
+.avatar.is-brown  { background: #7A4226; }
+
+/* ============================================================
+   BUTTON
+   ============================================================ */
+.btn {
+  --btn-bg: var(--surface-3);
+  --btn-ink: var(--ink);
+  appearance: none; border: 0; cursor: pointer;
+  font: inherit; font-weight: 600; font-size: var(--fs-14);
+  color: var(--btn-ink);
+  background: var(--btn-bg);
+  padding: 11px 18px;
+  border-radius: var(--r-md);
+  box-shadow: var(--elev-2);
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  transition:
+    box-shadow var(--dur-fast) var(--ease),
+    transform var(--dur-fast) var(--ease),
+    background var(--dur) var(--ease);
+  will-change: transform, box-shadow;
+}
+.btn:hover    { box-shadow: var(--elev-3); transform: translateY(-1px); }
+.btn:active,
+.btn.is-pressed {
+  box-shadow: var(--elev-pressed);
+  transform: translateY(4px);
+  transition-duration: 60ms;
+}
+.btn:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 3px;
+}
+
+.btn-primary   { --btn-bg: var(--blue);   --btn-ink: white; }
+.btn-success   { --btn-bg: var(--green);  --btn-ink: white; }
+.btn-warning   { --btn-bg: var(--amber);  --btn-ink: #2A1A00; }
+.btn-danger    { --btn-bg: var(--red);    --btn-ink: white; }
+.btn-orange    { --btn-bg: var(--orange); --btn-ink: white; }
+
+.btn-block { width: 100%; padding: 14px 18px; border-radius: var(--r-md); }
+
+/* ============================================================
+   ICON BUTTON
+   ============================================================ */
+.icon-btn {
+  width: 38px; height: 38px;
+  border-radius: var(--r-sm);
+  display: inline-grid; place-items: center;
+  background: var(--surface-3);
+  color: var(--ink-2);
+  border: 0; cursor: pointer;
+  box-shadow: var(--elev-2);
+  transition: box-shadow var(--dur-fast) var(--ease), transform var(--dur-fast) var(--ease);
+}
+.icon-btn:hover  { box-shadow: var(--elev-3); transform: translateY(-1px); }
+.icon-btn:active { box-shadow: var(--elev-pressed); transform: translateY(3px); transition-duration: 60ms; }
+
+.icon-btn.is-accent {
+  background: var(--violet-soft); color: var(--violet);
+}
+
+/* ============================================================
+   TABLE ROWS  (CRM mock)
+   ============================================================ */
+.table {
+  background: var(--surface);
+  border-radius: var(--r-lg);
+  padding: 8px;
+  box-shadow: var(--elev-2);
+}
+.table-head, .table-row {
+  display: grid;
+  grid-template-columns: 28px 1.6fr 1fr 1fr;
+  gap: 12px; align-items: center;
+  padding: 12px 14px;
+}
+.table-head {
+  font-size: var(--fs-12);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--ink-3); font-weight: 700;
+}
+.table-row + .table-row { border-top: 1px solid var(--hairline); }
+.table-row:hover { background: var(--surface-2); border-radius: var(--r-md); }
+
+.check {
+  width: 18px; height: 18px;
+  border-radius: 5px;
+  background: var(--surface-2);
+  box-shadow: var(--elev-inset);
+}
+
+.customer { display: flex; align-items: center; gap: 12px; font-weight: 600; }
+
+/* ============================================================
+   QTY STEPPER  (product mock)
+   ============================================================ */
+.stepper {
+  display: inline-flex; align-items: stretch;
+  background: var(--surface-3);
+  border-radius: var(--r-md);
+  box-shadow: var(--elev-2);
+  overflow: hidden;
+}
+.stepper button {
+  width: 38px; border: 0; background: transparent; cursor: pointer;
+  font-size: 18px; color: var(--ink-2);
+}
+.stepper button:active { background: var(--surface-2); }
+.stepper .val { padding: 0 14px; display: grid; place-items: center; font-weight: 700; }
+
+/* ============================================================
+   SWATCH (color picker chip)
+   ============================================================ */
+.swatch {
+  width: 32px; height: 32px; border-radius: 50%;
+  cursor: pointer;
+  box-shadow:
+    calc(var(--lx) * 2px) calc(2px + var(--ly)*1px) 2px rgba(40,30,10,0.22),
+    calc(var(--lx) * 4px) calc(4px + var(--ly)*2px) 4px rgba(40,30,10,0.10),
+    inset 1.5px 1.5px 2px rgba(255,255,255,0.35),
+    inset -1px -2px 2px rgba(0,0,0,0.22);
+  transition: transform var(--dur) var(--ease);
+}
+.swatch.is-active {
+  outline: 3px solid var(--surface);
+  outline-offset: -6px;
+  box-shadow:
+    0 0 0 2px var(--ink),
+    calc(var(--lx) * 2px) calc(2px + var(--ly)*1px) 2px rgba(40,30,10,0.22),
+    calc(var(--lx) * 4px) calc(4px + var(--ly)*2px) 4px rgba(40,30,10,0.10),
+    inset 1.5px 1.5px 2px rgba(255,255,255,0.35),
+    inset -1px -2px 2px rgba(0,0,0,0.22);
+}
+
+/* ============================================================
+   "Members only" lock card  (article mock)
+   ============================================================ */
+.lockcard {
+  background: var(--surface-2);
+  border-radius: var(--r-lg);
+  padding: 22px;
+  text-align: center;
+  box-shadow: var(--elev-2);
+}
+.lockcard .lock-icon {
+  width: 44px; height: 44px; border-radius: var(--r-sm);
+  margin: 0 auto 12px;
+  background: var(--violet-soft); color: var(--violet);
+  display: grid; place-items: center;
+  box-shadow: var(--elev-2);
+}
+
+/* ============================================================
+   FAKE LINES (loading shimmer-ish placeholder)
+   ============================================================ */
+.line { height: 10px; border-radius: var(--r-pill); background: var(--surface-2); box-shadow: var(--elev-inset); }
+.line + .line { margin-top: 8px; }
+.line.w-90 { width: 90%; } .line.w-70 { width: 70%; } .line.w-50 { width: 50%; }

@@ -1,0 +1,330 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Clay — Design System Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./tokens.css" />
+<link rel="stylesheet" href="./components.css" />
+</head>
+<body>
+<main class="page">
+
+  <header style="display:flex;justify-content:space-between;align-items:end;gap:24px;flex-wrap:wrap;">
+    <div>
+      <div class="eyebrow" style="margin-bottom:8px;">Clay · prototype</div>
+      <h1>Design system gallery</h1>
+      <p class="muted" style="max-width:560px;margin-top:8px;">
+        Stacked-paper depth with hybrid parallax. Move your cursor — the cast shadows follow the light.
+        On a phone, tilt the device. Tap a button to feel it press into the page.
+      </p>
+    </div>
+    <div class="row">
+      <button class="icon-btn" aria-label="Settings">⚙</button>
+      <button class="icon-btn is-accent" aria-label="Notifications">🔔</button>
+      <button class="btn btn-primary">New site</button>
+    </div>
+  </header>
+
+  <!-- ============ STAT TILES ============ -->
+  <section class="section">
+    <h2>Stat tiles</h2>
+    <div class="grid-4">
+      <div class="stat">
+        <div class="stat-icon" style="color:var(--green)">📄</div>
+        <div class="stat-meta"><span class="stat-label">Core updates</span><span class="stat-value">7</span></div>
+      </div>
+      <div class="stat">
+        <div class="stat-icon" style="color:var(--blue)">🗄</div>
+        <div class="stat-meta"><span class="stat-label">Backups</span><span class="stat-value">22</span></div>
+      </div>
+      <div class="stat">
+        <div class="stat-icon" style="color:var(--amber)">⏱</div>
+        <div class="stat-meta"><span class="stat-label">Uptime</span><span class="stat-value">99.98%</span></div>
+      </div>
+      <div class="stat">
+        <div class="stat-icon" style="color:var(--red)">🛡</div>
+        <div class="stat-meta"><span class="stat-label">Risks</span><span class="stat-value">3</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ BUTTONS ============ -->
+  <section class="section">
+    <h2>Buttons</h2>
+    <div class="card card-xl">
+      <div class="row" style="gap:12px;">
+        <button class="btn">Default</button>
+        <button class="btn btn-primary">Primary</button>
+        <button class="btn btn-success">Success</button>
+        <button class="btn btn-warning">Warning</button>
+        <button class="btn btn-danger">Danger</button>
+        <button class="btn btn-orange">Add to cart</button>
+      </div>
+      <div class="row" style="gap:12px;margin-top:18px;">
+        <button class="icon-btn" aria-label="Search">🔍</button>
+        <button class="icon-btn" aria-label="Filter">⏷</button>
+        <button class="icon-btn is-accent" aria-label="Favorite">♥</button>
+        <button class="icon-btn" aria-label="More">⋯</button>
+      </div>
+      <p class="muted" style="margin:18px 0 0;font-size:var(--fs-13)">
+        Hold a button to see the pressed state — rim collapses, element settles into the page.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============ BADGES ============ -->
+  <section class="section">
+    <h2>Badges</h2>
+    <div class="card">
+      <div class="row" style="gap:10px;">
+        <span class="badge is-success"><span class="dot"></span>Active</span>
+        <span class="badge is-warn"><span class="dot"></span>Trial</span>
+        <span class="badge is-danger"><span class="dot"></span>Cancelling</span>
+        <span class="badge is-info"><span class="dot"></span>Team</span>
+        <span class="badge is-violet"><span class="dot"></span>Gold</span>
+        <span class="badge is-neutral"><span class="dot"></span>Silver</span>
+        <span class="badge"><span class="dot"></span>Default</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ TABLE ============ -->
+  <section class="section">
+    <h2>Table</h2>
+    <div class="table">
+      <div class="table-head">
+        <div></div><div>Customer</div><div>Plan</div><div>Status</div>
+      </div>
+      <div class="table-row">
+        <div class="check"></div>
+        <div class="customer"><div class="avatar">EM</div>Elena Marquez</div>
+        <div><span class="badge is-warn"><span class="dot"></span>Gold</span></div>
+        <div><span class="badge is-success"><span class="dot"></span>Active</span></div>
+      </div>
+      <div class="table-row">
+        <div class="check"></div>
+        <div class="customer"><div class="avatar is-brown">DT</div>Daniel Torres</div>
+        <div><span class="badge is-info"><span class="dot"></span>Team</span></div>
+        <div><span class="badge is-success"><span class="dot"></span>Active</span></div>
+      </div>
+      <div class="table-row">
+        <div class="check"></div>
+        <div class="customer"><div class="avatar is-green">RP</div>Riley Park</div>
+        <div><span class="badge is-neutral"><span class="dot"></span>Silver</span></div>
+        <div><span class="badge is-warn"><span class="dot"></span>Trial</span></div>
+      </div>
+      <div class="table-row">
+        <div class="check"></div>
+        <div class="customer"><div class="avatar is-violet">SM</div>Sarah Miller</div>
+        <div><span class="badge is-warn"><span class="dot"></span>Gold</span></div>
+        <div><span class="badge is-success"><span class="dot"></span>Active</span></div>
+      </div>
+      <div class="table-row">
+        <div class="check"></div>
+        <div class="customer"><div class="avatar is-amber">AT</div>Alex Taylor</div>
+        <div><span class="badge is-danger"><span class="dot"></span>Bronze</span></div>
+        <div><span class="badge is-danger"><span class="dot"></span>Cancelling</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CARDS ============ -->
+  <section class="section">
+    <h2>Cards</h2>
+    <div class="grid-3">
+
+      <!-- Article preview card -->
+      <article class="card card-xl is-hover-lift">
+        <div class="eyebrow" style="color:var(--blue)">Members · Playbook</div>
+        <h3 style="margin:10px 0 14px;font-size:var(--fs-18);line-height:1.25;">
+          Scaling recurring revenue past your first 1,000 members
+        </h3>
+        <div class="row" style="gap:10px;margin-bottom:14px;">
+          <div class="avatar is-violet" style="width:28px;height:28px;font-size:11px;">MN</div>
+          <span class="muted" style="font-size:var(--fs-13)">Maya Nakamura · 8 min read</span>
+        </div>
+        <div class="line w-90"></div>
+        <div class="line w-70"></div>
+        <div class="line w-50"></div>
+
+        <div class="lockcard" style="margin-top:20px;">
+          <div class="lock-icon">🔒</div>
+          <div class="eyebrow" style="color:var(--violet)">Members only</div>
+          <p style="margin:8px 0 14px;font-weight:600;">Continue reading with a Kadence membership</p>
+          <button class="btn btn-primary btn-block">Unlock full article — from $19/mo</button>
+          <p class="muted" style="margin:12px 0 0;font-size:var(--fs-13)">
+            Already a member? <a href="#" style="color:var(--blue);font-weight:600;text-decoration:none">Log in</a>
+          </p>
+        </div>
+      </article>
+
+      <!-- Product card -->
+      <article class="card card-xl is-hover-lift">
+        <div style="display:flex;justify-content:space-between;align-items:start;gap:12px;">
+          <h3 style="font-size:var(--fs-18)">Wireless Headphones Pro</h3>
+          <span class="badge is-success">★ 4.9</span>
+        </div>
+        <div style="margin:14px 0;display:flex;align-items:baseline;gap:10px;">
+          <span style="font-size:var(--fs-28);font-weight:700">$89.99</span>
+          <span class="muted" style="text-decoration:line-through;">$129.99</span>
+          <span class="badge is-danger" style="margin-left:auto;">31% OFF</span>
+        </div>
+        <p class="muted" style="margin:0 0 16px;font-size:var(--fs-13)">
+          Premium sound. 40-hour battery. Adaptive noise cancelling. Built for long sessions.
+        </p>
+
+        <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:18px;">
+          <span class="eyebrow">Color</span>
+          <div class="row" style="gap:10px;">
+            <span class="swatch is-active" style="background:var(--orange)"></span>
+            <span class="swatch" style="background:var(--blue)"></span>
+            <span class="swatch" style="background:#1E1A14"></span>
+            <span class="swatch" style="background:var(--surface-2)"></span>
+          </div>
+        </div>
+
+        <div class="row" style="justify-content:space-between;">
+          <div class="stepper">
+            <button aria-label="decrease">−</button>
+            <span class="val">1</span>
+            <button aria-label="increase">+</button>
+          </div>
+          <button class="btn btn-orange">Add to Cart</button>
+        </div>
+      </article>
+
+      <!-- Site row card -->
+      <article class="card card-xl is-hover-lift">
+        <div class="card-header">
+          <h3 style="font-size:var(--fs-18)">Sites</h3>
+          <button class="icon-btn" aria-label="More">⋯</button>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <div class="row" style="justify-content:space-between;">
+            <div class="row" style="gap:10px;"><div class="avatar is-green" style="width:30px;height:30px;font-size:12px">🌸</div><strong>bloom-studio.com</strong></div>
+            <span class="badge is-success"><span class="dot"></span>No downtime</span>
+          </div>
+          <div class="row" style="justify-content:space-between;">
+            <div class="row" style="gap:10px;"><div class="avatar" style="width:30px;height:30px;font-size:12px">🏘</div><strong>villamore.com</strong></div>
+            <span class="badge is-info"><span class="dot"></span>In progress</span>
+          </div>
+          <div class="row" style="justify-content:space-between;">
+            <div class="row" style="gap:10px;"><div class="avatar is-amber" style="width:30px;height:30px;font-size:12px">☀</div><strong>atlas-mag.com</strong></div>
+            <span class="badge is-warn"><span class="dot"></span>7 hours</span>
+          </div>
+          <div class="row" style="justify-content:space-between;">
+            <div class="row" style="gap:10px;"><div class="avatar is-red" style="width:30px;height:30px;font-size:12px">📕</div><strong>noir-quarterly.com</strong></div>
+            <span class="badge is-danger"><span class="dot"></span>Failed backup</span>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ============ PARALLAX DEBUG ============ -->
+  <section class="section" style="opacity:.8">
+    <h2>Light direction</h2>
+    <p class="muted">
+      The global CSS vars driving every shadow on this page:
+      <code style="background:var(--surface-2);padding:2px 8px;border-radius:6px">--mx</code>
+      <code style="background:var(--surface-2);padding:2px 8px;border-radius:6px">--my</code>
+      — currently <span id="lx-readout" style="font-variant-numeric:tabular-nums">0.00, 0.00</span>.
+    </p>
+  </section>
+
+</main>
+
+<script>
+/* ============================================================
+   HYBRID PARALLAX
+   Global light direction from cursor/device tilt is written
+   to :root as --mx, --my (range [-1, 1]).
+   Per-element hover amplifies via --tilt-x / --tilt-y on the
+   hovered node only (CSS does the rest through composed shadows).
+   ============================================================ */
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduce) return;
+
+  const root = document.documentElement;
+  const readout = document.getElementById('lx-readout');
+
+  // Smoothed values — easing prevents jitter & makes shadows feel inertial.
+  let tx = 0, ty = 0;     // target
+  let cx = 0, cy = 0;     // current
+  const EASE = 0.12;
+
+  function setTarget(nx, ny) {
+    // Clamp & dead-zone
+    tx = Math.max(-1, Math.min(1, nx));
+    ty = Math.max(-1, Math.min(1, ny));
+  }
+
+  // Desktop: viewport-relative cursor
+  window.addEventListener('pointermove', (e) => {
+    if (e.pointerType !== 'mouse' && e.pointerType !== 'pen') return;
+    const x = (e.clientX / window.innerWidth)  * 2 - 1;
+    const y = (e.clientY / window.innerHeight) * 2 - 1;
+    setTarget(x, y);
+  }, { passive: true });
+
+  // Mobile: device tilt (gated behind iOS permission API)
+  function attachTilt() {
+    window.addEventListener('deviceorientation', (e) => {
+      // gamma: left-right [-90,90], beta: front-back [-180,180]
+      const x = Math.max(-1, Math.min(1, (e.gamma  || 0) / 30));
+      const y = Math.max(-1, Math.min(1, ((e.beta || 0) - 30) / 30));
+      setTarget(x, y);
+    }, { passive: true });
+  }
+  if (typeof DeviceOrientationEvent !== 'undefined') {
+    if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+      // iOS — request on first touch
+      window.addEventListener('touchstart', () => {
+        DeviceOrientationEvent.requestPermission().then(s => { if (s === 'granted') attachTilt(); }).catch(()=>{});
+      }, { once: true });
+    } else {
+      attachTilt();
+    }
+  }
+
+  // Animation loop
+  (function tick() {
+    cx += (tx - cx) * EASE;
+    cy += (ty - cy) * EASE;
+    root.style.setProperty('--mx', cx.toFixed(3));
+    root.style.setProperty('--my', cy.toFixed(3));
+    if (readout) readout.textContent = cx.toFixed(2) + ', ' + cy.toFixed(2);
+    requestAnimationFrame(tick);
+  })();
+
+  /* ----- Per-element amplification (hybrid) -----
+     On hover/pointer over an "elevated" element, write
+     --tilt-x / --tilt-y based on the pointer's position
+     INSIDE the element. This adds local micro-tilt on top of
+     the global light direction. */
+  const AMP = 0.45;
+  const elevated = document.querySelectorAll('.card, .stat, .btn, .icon-btn, .badge');
+  elevated.forEach(el => {
+    el.addEventListener('pointermove', (e) => {
+      const r = el.getBoundingClientRect();
+      const lx = ((e.clientX - r.left) / r.width)  * 2 - 1;
+      const ly = ((e.clientY - r.top)  / r.height) * 2 - 1;
+      el.style.setProperty('--tilt-x', (lx * AMP).toFixed(3));
+      el.style.setProperty('--tilt-y', (ly * AMP).toFixed(3));
+    });
+    el.addEventListener('pointerleave', () => {
+      el.style.setProperty('--tilt-x', '0');
+      el.style.setProperty('--tilt-y', '0');
+    });
+  });
+})();
+</script>
+</body>
+</html>
