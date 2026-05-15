@@ -10,11 +10,18 @@
 <link rel="stylesheet" href="./tokens.css" />
 <link rel="stylesheet" href="./components.css" />
 <script>
-  /* Set theme before paint to avoid a flash on load */
+  /* Set theme before paint to avoid a flash on load.
+     State: tone (warm | daylight | blue | indigo | amber | emerald)
+            mode (light | dark)
+     data-theme value = `${tone}-${mode}`. warm-light is the default
+     and is represented by absence of the attribute. */
   (() => {
     try {
-      const t = localStorage.getItem('bask-theme');
-      if (t === 'night') document.documentElement.setAttribute('data-theme', 'night');
+      const tone = localStorage.getItem('bask-tone') || 'warm';
+      const mode = localStorage.getItem('bask-mode') || 'light';
+      if (!(tone === 'warm' && mode === 'light')) {
+        document.documentElement.setAttribute('data-theme', `${tone}-${mode}`);
+      }
     } catch (_) {}
   })();
 </script>
@@ -33,7 +40,25 @@
     <div class="row">
       <button class="icon-btn" aria-label="Settings" data-tooltip="Settings" data-tooltip-pos="bottom">⚙</button>
       <button class="icon-btn is-accent" aria-label="Notifications" data-tooltip="3 unread" data-tooltip-pos="bottom">🔔</button>
-      <button class="icon-btn" id="theme-toggle" aria-label="Toggle theme" data-tooltip="Toggle theme" data-tooltip-pos="bottom">🌙</button>
+
+      <details class="dropdown" id="tone-picker">
+        <summary class="btn dropdown-trigger" aria-label="Theme tone">
+          <span class="theme-swatch" data-tone="warm" id="tone-current-swatch"></span>
+          <span id="tone-current-label">Warm</span>
+          <span class="chevron">▾</span>
+        </summary>
+        <div class="dropdown-menu">
+          <div class="menu-label">Theme tone</div>
+          <button class="menu-item" data-tone="warm"    ><span class="theme-swatch" data-tone="warm"    ></span>Warm     <span class="menu-check">✓</span></button>
+          <button class="menu-item" data-tone="daylight"><span class="theme-swatch" data-tone="daylight"></span>Daylight <span class="menu-check">✓</span></button>
+          <button class="menu-item" data-tone="blue"    ><span class="theme-swatch" data-tone="blue"    ></span>Blue     <span class="menu-check">✓</span></button>
+          <button class="menu-item" data-tone="indigo"  ><span class="theme-swatch" data-tone="indigo"  ></span>Indigo   <span class="menu-check">✓</span></button>
+          <button class="menu-item" data-tone="amber"   ><span class="theme-swatch" data-tone="amber"   ></span>Amber    <span class="menu-check">✓</span></button>
+          <button class="menu-item" data-tone="emerald" ><span class="theme-swatch" data-tone="emerald" ></span>Emerald  <span class="menu-check">✓</span></button>
+        </div>
+      </details>
+
+      <button class="icon-btn" id="theme-toggle" aria-label="Toggle light/dark" data-tooltip="Switch to dark" data-tooltip-pos="bottom">🌙</button>
       <button class="btn btn-primary">New site</button>
     </div>
   </header>
@@ -340,19 +365,34 @@
           </div>
         </div>
 
-        <h3 style="margin:24px 0 12px;">Theme</h3>
-        <div style="display:flex;flex-direction:column;gap:10px;">
+        <h3 style="margin:24px 0 12px;">Theme tone</h3>
+        <p class="muted" style="font-size:var(--fs-13);margin:0 0 12px;">
+          Six tones, each with a light and dark mode. Pick a tone here or from the header; use the 🌙 toggle for light↔dark.
+        </p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
           <label class="choice">
-            <span class="radio"><input type="radio" name="theme" checked /><span class="radio-circle"></span></span>
-            <span><strong>Dusk</strong> <span class="muted" style="font-size:var(--fs-13);">— the carved cream default.</span></span>
+            <span class="radio"><input type="radio" name="tone" value="warm" checked /><span class="radio-circle"></span></span>
+            <span style="display:flex;align-items:center;gap:8px;"><span class="theme-swatch" data-tone="warm"></span><strong>Warm</strong></span>
           </label>
           <label class="choice">
-            <span class="radio"><input type="radio" name="theme" /><span class="radio-circle"></span></span>
-            <span><strong>Night</strong> <span class="muted" style="font-size:var(--fs-13);">— deep warm browns, cream ink.</span></span>
+            <span class="radio"><input type="radio" name="tone" value="daylight" /><span class="radio-circle"></span></span>
+            <span style="display:flex;align-items:center;gap:8px;"><span class="theme-swatch" data-tone="daylight"></span><strong>Daylight</strong></span>
           </label>
           <label class="choice">
-            <span class="radio"><input type="radio" name="theme" /><span class="radio-circle"></span></span>
-            <span><strong>System</strong> <span class="muted" style="font-size:var(--fs-13);">— follow OS preference.</span></span>
+            <span class="radio"><input type="radio" name="tone" value="blue" /><span class="radio-circle"></span></span>
+            <span style="display:flex;align-items:center;gap:8px;"><span class="theme-swatch" data-tone="blue"></span><strong>Blue</strong></span>
+          </label>
+          <label class="choice">
+            <span class="radio"><input type="radio" name="tone" value="indigo" /><span class="radio-circle"></span></span>
+            <span style="display:flex;align-items:center;gap:8px;"><span class="theme-swatch" data-tone="indigo"></span><strong>Indigo</strong></span>
+          </label>
+          <label class="choice">
+            <span class="radio"><input type="radio" name="tone" value="amber" /><span class="radio-circle"></span></span>
+            <span style="display:flex;align-items:center;gap:8px;"><span class="theme-swatch" data-tone="amber"></span><strong>Amber</strong></span>
+          </label>
+          <label class="choice">
+            <span class="radio"><input type="radio" name="tone" value="emerald" /><span class="radio-circle"></span></span>
+            <span style="display:flex;align-items:center;gap:8px;"><span class="theme-swatch" data-tone="emerald"></span><strong>Emerald</strong></span>
           </label>
         </div>
 
@@ -923,29 +963,89 @@
 })();
 
 /* ============================================================
-   THEME TOGGLE — dusk (default) ↔ night
+   THEME PICKER — tone dropdown + light/dark toggle
+     data-theme = `${tone}-${mode}`
+     warm-light is the implicit default (no attribute on <html>).
    ============================================================ */
 (() => {
   const toggle = document.getElementById('theme-toggle');
-  if (!toggle) return;
+  const picker = document.getElementById('tone-picker');
+  if (!toggle || !picker) return;
+
+  const TONE_LABELS = {
+    warm: 'Warm', daylight: 'Daylight', blue: 'Blue',
+    indigo: 'Indigo', amber: 'Amber', emerald: 'Emerald',
+  };
+
+  const currentSwatch = document.getElementById('tone-current-swatch');
+  const currentLabel  = document.getElementById('tone-current-label');
+
+  const readState = () => {
+    const attr = document.documentElement.getAttribute('data-theme');
+    if (!attr) return { tone: 'warm', mode: 'light' };
+    const [tone, mode] = attr.split('-');
+    return { tone, mode };
+  };
+
+  const applyState = ({ tone, mode }) => {
+    if (tone === 'warm' && mode === 'light') {
+      document.documentElement.removeAttribute('data-theme');
+    } else {
+      document.documentElement.setAttribute('data-theme', `${tone}-${mode}`);
+    }
+    try {
+      localStorage.setItem('bask-tone', tone);
+      localStorage.setItem('bask-mode', mode);
+    } catch (_) {}
+    sync();
+  };
 
   const sync = () => {
-    const isNight = document.documentElement.getAttribute('data-theme') === 'night';
-    toggle.textContent = isNight ? '☀' : '🌙';
-    toggle.setAttribute('data-tooltip', isNight ? 'Switch to dusk' : 'Switch to night');
+    const { tone, mode } = readState();
+
+    // Toggle icon + tooltip
+    toggle.textContent = mode === 'dark' ? '☀' : '🌙';
+    toggle.setAttribute('data-tooltip', mode === 'dark' ? 'Switch to light' : 'Switch to dark');
+
+    // Dropdown trigger reflects current tone
+    currentSwatch.setAttribute('data-tone', tone);
+    currentLabel.textContent = TONE_LABELS[tone];
+
+    // Active state in menu
+    picker.querySelectorAll('.menu-item[data-tone]').forEach(item => {
+      const isActive = item.getAttribute('data-tone') === tone;
+      if (isActive) item.setAttribute('aria-current', 'true');
+      else item.removeAttribute('aria-current');
+    });
+
+    // Mirror to the in-form tone radios
+    document.querySelectorAll('input[name="tone"]').forEach(r => {
+      r.checked = r.value === tone;
+    });
   };
-  sync();
 
   toggle.addEventListener('click', () => {
-    const next = document.documentElement.getAttribute('data-theme') === 'night' ? null : 'night';
-    if (next) {
-      document.documentElement.setAttribute('data-theme', next);
-    } else {
-      document.documentElement.removeAttribute('data-theme');
-    }
-    try { localStorage.setItem('bask-theme', next || 'dusk'); } catch (_) {}
-    sync();
+    const { tone, mode } = readState();
+    applyState({ tone, mode: mode === 'dark' ? 'light' : 'dark' });
   });
+
+  picker.querySelectorAll('.menu-item[data-tone]').forEach(item => {
+    item.addEventListener('click', () => {
+      const { mode } = readState();
+      applyState({ tone: item.getAttribute('data-tone'), mode });
+      // existing dropdown JS closes <details> after menu-item click
+    });
+  });
+
+  document.querySelectorAll('input[name="tone"]').forEach(radio => {
+    radio.addEventListener('change', () => {
+      if (!radio.checked) return;
+      const { mode } = readState();
+      applyState({ tone: radio.value, mode });
+    });
+  });
+
+  sync();
 })();
 
 /* ============================================================
