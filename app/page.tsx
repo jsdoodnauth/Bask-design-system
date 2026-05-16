@@ -85,6 +85,7 @@ export default function Home() {
           { href: "/customers", label: "Customers" },
           { href: "/article",   label: "Article"   },
           { href: "/product",   label: "Product"   },
+          { href: "/components", label: "Components" },
         ].map(({ href, label }) => (
           <Link
             key={href}

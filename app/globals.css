@@ -781,13 +781,20 @@ h3 {
 [data-slot="dropdown-menu-content"],
 [data-slot="select-content"] { box-shadow: var(--elev-3); }
 
-/* --- Dialog backdrop & content --- */
-[data-slot="dialog-overlay"] {
+/* --- Dialog / Alert Dialog / Sheet / Drawer backdrop & content --- */
+[data-slot="dialog-overlay"],
+[data-slot="alert-dialog-overlay"],
+[data-slot="sheet-overlay"],
+[data-slot="drawer-overlay"] {
   background: var(--modal-backdrop) !important;
   backdrop-filter: blur(8px) saturate(130%);
   -webkit-backdrop-filter: blur(8px) saturate(130%);
 }
-[data-slot="dialog-content"] { box-shadow: var(--elev-3); }
+[data-slot="dialog-content"],
+[data-slot="alert-dialog-content"],
+[data-slot="sheet-content"],
+[data-slot="drawer-content"],
+[data-slot="toast"] { box-shadow: var(--elev-3); }
 
 /* --- Stat tile --- */
 [data-slot="stat"] {
@@ -897,12 +904,20 @@ h3 {
   [data-slot="textarea"],
   [data-slot="select-trigger"],
   [data-slot="dialog-content"],
+  [data-slot="alert-dialog-content"],
+  [data-slot="sheet-content"],
+  [data-slot="drawer-content"],
+  [data-slot="toast"],
   [data-slot="dropdown-menu-content"],
   [data-slot="select-content"],
   [data-slot="tabs-list"],
   [data-slot="switch"],
   [data-slot="checkbox"],
-  [data-slot="radio-group-item"] {
+  [data-slot="radio-group-item"],
+  [data-slot="alert"],
+  [data-slot="progress-track"],
+  [data-slot="slider-track"],
+  [data-slot="toggle-group"] {
     outline: 1px solid var(--hairline);
     outline-offset: -1px;
   }
