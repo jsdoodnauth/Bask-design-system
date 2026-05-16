@@ -4,7 +4,8 @@
       "Bash(npx skills *)",
       "PowerShell(npm *)",
       "Bash(npx next *)",
-      "Bash(npx tsc *)"
+      "Bash(npx tsc *)",
+      "Bash(npm install *)"
     ]
   }
 }

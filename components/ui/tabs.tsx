@@ -1,8 +1,12 @@
 "use client"
 
+import { createContext, useContext, useId } from "react"
 import { Tabs as TabsPrimitive } from "@base-ui/react/tabs"
+import { motion, LayoutGroup } from "framer-motion"
 
 import { cn } from "@/lib/utils"
+
+const TabsVariantContext = createContext<"pill" | "line">("pill")
 
 function Tabs({
   className,
@@ -25,41 +29,72 @@ function TabsList({
   variant = "pill",
   ...props
 }: TabsPrimitive.List.Props & { variant?: "pill" | "line" }) {
+  const layoutId = useId()
   return (
-    <TabsPrimitive.List
-      data-slot="tabs-list"
-      data-variant={variant}
-      className={cn(
-        variant === "pill"
-          ? "inline-flex items-center gap-0.5 p-1 rounded-md bg-surface-2"
-          : "flex items-center border-b border-[color:var(--hairline)] bg-transparent",
-        className
-      )}
-      {...props}
-    />
+    <TabsVariantContext.Provider value={variant}>
+      <LayoutGroup id={layoutId}>
+        <TabsPrimitive.List
+          data-slot="tabs-list"
+          data-variant={variant}
+          className={cn(
+            variant === "pill"
+              ? "inline-flex items-center gap-0.5 rounded-md bg-surface-2 p-1"
+              : "flex items-center border-b border-[color:var(--hairline)]",
+            className
+          )}
+          {...props}
+        />
+      </LayoutGroup>
+    </TabsVariantContext.Provider>
   )
 }
 
-function TabsTrigger({ className, ...props }: TabsPrimitive.Tab.Props) {
+function TabsTrigger({ className, children, ...props }: TabsPrimitive.Tab.Props) {
+  const variant = useContext(TabsVariantContext)
+  const isLine = variant === "line"
+
   return (
     <TabsPrimitive.Tab
       data-slot="tabs-trigger"
-      className={cn(
-        // Pill variant base
-        "relative inline-flex items-center justify-center px-4 py-2 rounded-[calc(var(--r-md)-2px)]",
-        "text-[length:var(--fs-13)] font-semibold cursor-pointer border-0 bg-transparent outline-none",
-        "text-ink-3 transition-[background,color,box-shadow] duration-[var(--dur-fast)]",
-        "hover:text-ink-2",
-        // Active pill
-        "data-active:bg-surface data-active:text-ink",
-        // Line (groove) variant base
-        "in-[[data-variant=line]]:rounded-[var(--r-sm)_var(--r-sm)_0_0] in-[[data-variant=line]]:px-5 in-[[data-variant=line]]:py-[10px]",
-        "in-[[data-variant=line]]:text-[length:var(--fs-14)] in-[[data-variant=line]]:font-medium",
-        // Line active: inset shadow, background, overlap the hairline
-        "in-[[data-variant=line]]:data-active:bg-surface-2 in-[[data-variant=line]]:data-active:text-ink in-[[data-variant=line]]:data-active:font-semibold",
-        "in-[[data-variant=line]]:data-active:shadow-[var(--elev-inset)] in-[[data-variant=line]]:data-active:-mb-px in-[[data-variant=line]]:data-active:pb-[11px]",
-        "disabled:pointer-events-none disabled:opacity-50",
-        className
+      render={(htmlProps, state) => (
+        <button
+          {...htmlProps}
+          className={cn(
+            "relative inline-flex cursor-pointer items-center justify-center border-0 outline-none",
+            "text-ink-3 transition-[color] duration-[var(--dur-fast)]",
+            "hover:text-ink-2 disabled:pointer-events-none disabled:opacity-50",
+            !isLine && [
+              "rounded-[calc(var(--r-md)-2px)] bg-transparent px-4 py-2",
+              "text-[length:var(--fs-13)] font-semibold",
+              "data-active:text-ink",
+            ],
+            isLine && [
+              "rounded-[var(--r-sm)_var(--r-sm)_0_0] bg-transparent px-5 py-[10px]",
+              "text-[length:var(--fs-14)] font-medium",
+              // hairline-overlap trick: active tab bleeds 1px into the border so it hides it
+              "data-active:text-ink data-active:font-semibold data-active:-mb-px data-active:pb-[11px]",
+            ],
+            className
+          )}
+        >
+          {!isLine && state.active && (
+            <motion.span
+              layoutId="pill-bg"
+              aria-hidden
+              className="absolute inset-0 rounded-[calc(var(--r-md)-2px)] bg-surface shadow-[var(--elev-1)]"
+              transition={{ type: "spring", stiffness: 380, damping: 35 }}
+            />
+          )}
+          {isLine && state.active && (
+            <motion.span
+              layoutId="groove-bg"
+              aria-hidden
+              className="absolute inset-0 rounded-[var(--r-sm)_var(--r-sm)_0_0] bg-surface-2 shadow-[var(--elev-inset)]"
+              transition={{ type: "spring", stiffness: 380, damping: 35 }}
+            />
+          )}
+          <span className="relative z-10">{children}</span>
+        </button>
       )}
       {...props}
     />
