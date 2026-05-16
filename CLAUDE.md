@@ -4,7 +4,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this repo is
 
-A design-system prototype called **Bask**. The full implementation plan lives in `docs/plan.md`; the design language is documented in `docs/design-system.md`. Plan: prototype the system as plain HTML/CSS/JS, then port to **Next.js 15 + Tailwind v4 (`@theme inline`) + shadcn/ui**. The Next.js app does not exist yet — everything in `prototype/` is the visual source of truth that will be ported.
+A design-system prototype called **Bask**. The full implementation plan lives in `docs/plan.md`; the design language is documented in `docs/design-system.md`. Plan: prototype the system as plain HTML/CSS/JS, then port to **Next.js 16 + React 19 + Tailwind v4 (`@theme inline`) + shadcn/ui**. The Next.js app is scaffolded (milestones 1–3 complete: tokens, `baskShadow()` helper, `BaskMotionProvider`). The `prototype/` directory remains the visual source of truth for components yet to be ported.
+
+> **Next.js version note**: `create-next-app` installs Next 16, not Next 15 as some older docs may say. Next 16 has breaking changes from training-data Next — read the relevant guide in `node_modules/next/dist/docs/` before writing Next-specific code.
 
 Note: the repo directory is still named `clay-system/` (filesystem rename not done yet) but the design system itself is **Bask**. References to the directory name will be updated when the repo is renamed.
 
@@ -86,13 +88,18 @@ Buttons do **not** use `translateY` for press. Size stays constant across all st
 - `docs/plan.md` — eight-milestone roadmap from prototype → Next.js port. Updates here when decisions change.
 - `docs/mocks/` — original PNG references for the four target pages (dashboard, customers table, article/paywall, product).
 
-## When porting to Next.js (planned, not yet started)
+## Next.js port (scaffolded — milestones 1–3 complete)
 
-Per `docs/plan.md`: `app/` directory at repo root, Next.js 15 + TS + Tailwind v4 `@theme inline` (CSS-first, no `tailwind.config.ts`). The plan reflects the current decisions — read it before scaffolding.
+- `app/` — App Router at repo root (no `src/`).
+- `app/globals.css` — prototype tokens inlined verbatim, `@property --tilt-x/--tilt-y` kept at **top level** (NOT inside `@layer` — Tailwind v4 will silently break the registrations otherwise). `@theme inline` exposes only static tokens as Tailwind utilities. Body `::before` grain lives here too.
+- `app/layout.tsx` — Inter + Fraunces via `next/font/google` (variables `--font-inter` / `--font-fraunces`, consumed by `--font-sans` / `--font-display`). `BaskMotionProvider` wraps `{children}`.
+- `lib/bask-shadow.ts` — 10-key enum (`card`, `card-hover`, `badge`, `avatar`, `swatch`, `btn`, `btn-hover`, `btn-pressed`, `switch-thumb`, `tooltip`) + `focusRing` / `inkRing` modifier flags. Returns a CSS string with `var(--tilt-x)` / `var(--tilt-y)` referenced directly.
+- `lib/motion/bask-motion-provider.tsx` — Client island. Elements register via `useBaskTilt()` ref-callback (NOT class-name + `MutationObserver`). Provider iterates a `Set<HTMLElement>`. Tunables `AMP=1.0`, `OUTER=380`, `EASE=0.18` match the prototype 1:1.
 
-Key constraints that carry into the React port:
-- The inline-shadow rule applies: reactive shadows can't be Tailwind utilities pointing at `--elev-*`. Use a `baskShadow()` helper that returns a string with `var(--tilt-x)` / `var(--tilt-y)` in the cast offsets, applied via inline `style`.
-- `BaskMotionProvider` is the only client island. There is no `useBaskTilt()` hook — the proximity model handles per-element response from one global cursor; components just need to be in the provider's SELECTOR.
+Constraints to remember:
+- The inline-shadow rule still applies in React: reactive shadows must reference `var(--tilt-x)` / `var(--tilt-y)` directly, never indirectly through `--elev-*`. Use `baskShadow()` — either via inline `style={{ boxShadow }}` or (per milestone-0 decision 8) a `cva` recipe that emits a class whose CSS rule contains the same shadow string. Both work; both depend on the `@property` registration.
 - Press policy: no `translateY` on `:active`. Shadow-only feedback.
+- Hover under inline style: components own both shadow strings and swap via a CSS-module `&:hover { box-shadow: … }` rule (decision 2). Not React state.
+- **CSS variable cascade rule**: CSS custom properties that need to be overridden by Tailwind utility classes (e.g. `[--btn-hi:rgba(...)]` on colored button variants) must be declared inside `@layer components` in `globals.css`. Unlayered CSS beats `@layer utilities`, so an unlayered `[data-slot="button"] { --btn-hi: ... }` will silently ignore all per-variant utility overrides. Keep `box-shadow` rules themselves unlayered — only the overridable variable defaults go in the layer.
 
-`motion-framer` skill is installed for richer React-side motion (page transitions, list reorders) if/when those are needed.
+Open decisions and design rationale captured in `docs/milestone-0.md`. The `motion-framer` skill is installed for richer React-side motion (page transitions, list reorders) if/when those are needed.

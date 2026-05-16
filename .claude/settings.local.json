@@ -2,7 +2,9 @@
   "permissions": {
     "allow": [
       "Bash(npx skills *)",
-      "PowerShell(npm *)"
+      "PowerShell(npm *)",
+      "Bash(npx next *)",
+      "Bash(npx tsc *)"
     ]
   }
 }

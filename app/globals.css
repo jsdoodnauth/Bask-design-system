@@ -1,0 +1,909 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* ============================================================
+   BASK DESIGN SYSTEM — globals.css
+   Sourced verbatim from prototype/tokens.css + body grain.
+
+   Decision 6: @property declarations MUST stay at top level
+   (outside any @layer). Tailwind v4 layer ordering will silently
+   break the registrations otherwise, and the cast-invalidation
+   bug returns. DO NOT MOVE INTO @layer.
+   ============================================================ */
+
+@property --tilt-x {
+  syntax: "<number>";
+  initial-value: 0;
+  inherits: true;
+}
+@property --tilt-y {
+  syntax: "<number>";
+  initial-value: 0;
+  inherits: true;
+}
+
+/* ============================================================
+   :root — global defaults + WARM-LIGHT palette
+   ============================================================ */
+:root {
+  /* ---------- Surface palette (warm cream) ---------- */
+  --bg:           #EFE7D8;
+  --bg-deep:      #E4D9C5;
+  --surface:      #FBF6EB;
+  --surface-2:    #F5EEDE;
+  --surface-3:    #FFFDF7;
+  --hairline:     rgba(60, 40, 10, 0.08);
+
+  /* ---------- Ink ---------- */
+  --ink:          #1E1A14;
+  --ink-2:        #4A4234;
+  --ink-3:        #847A66;
+  --ink-inv:      #FBF6EB;
+
+  /* ---------- Accents (global across all themes) ---------- */
+  --blue:         #3C5BFF;
+  --blue-soft:    #DCE2FF;
+  --green:        #2EA86A;
+  --green-soft:   #D4ECDB;
+  --amber:        #E8A93B;
+  --amber-soft:   #FBE6BE;
+  --red:          #D7484A;
+  --red-soft:     #F6D5D5;
+  --violet:       #7A5BFF;
+  --violet-soft:  #E2DBFF;
+  --orange:       #F08A3C;
+  --orange-soft:  #FBD9BB;
+
+  /* ---------- Radii ---------- */
+  --r-xs:  6px;
+  --r-sm:  10px;
+  --r-md:  14px;
+  --r-lg:  20px;
+  --r-xl:  28px;
+  --r-pill: 999px;
+
+  /* ---------- Type ----------
+     --font-inter / --font-fraunces are set by next/font in layout.tsx. */
+  --font-sans: var(--font-inter), "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-display: var(--font-fraunces), "Fraunces", "Iowan Old Style", "Georgia", serif;
+  --fs-12: 12px; --fs-13: 13px; --fs-14: 14px; --fs-16: 16px;
+  --fs-18: 18px; --fs-22: 22px; --fs-28: 28px; --fs-36: 40px;
+  --tracking-eyebrow: 0.12em;
+  --tracking-display: -0.02em;
+  --lh-display: 1.05;
+  --lh-body: 1.5;
+
+  /* ---------- Tinted icon-tile surfaces (light defaults) ---------- */
+  --tint-blue:    #E6EEFA;
+  --tint-green:   #E2F0E5;
+  --tint-amber:   #FBECC9;
+  --tint-red:     #F8DBD7;
+  --tint-violet:  #EAE3FB;
+  --tint-orange:  #FBE0C7;
+
+  /* ---------- Page grain ---------- */
+  --grain-top:    rgba(255, 255, 255, 0.55);
+  --grain-bottom: rgba(60, 40, 10, 0.06);
+
+  /* ---------- Focus ring ---------- */
+  --ring-color: rgba(60, 91, 255, 0.40);
+  /* --ring as a box-shadow layer — append as the last shadow in any focus rule */
+  --ring: 0 0 0 3px var(--ring-color);
+
+  /* ---------- Motion ---------- */
+  --ease: cubic-bezier(.2, .8, .2, 1);
+  --dur-fast: 120ms;
+  --dur:      220ms;
+
+  /* ---------- Parallax (per-element overrides written by motion provider) ---------- */
+  --tilt-x: 0;
+  --tilt-y: 0;
+
+  /* ---------- Shadow primitives (themeable) ---------- */
+  --hi-rgb:     255 255 255;
+  --hi-scale:   1;
+  --lo-rgb:     0 0 0;
+  --lo-scale:   1;
+  --cast-rgb:   60 40 10;
+  --cast-scale: 1;
+
+  --tooltip-cast:   rgb(20 14 5 / 0.40);
+  --modal-backdrop: rgba(50, 38, 16, 0.42);
+
+  /* ---------- Elevations (STATIC USE ONLY — see CLAUDE.md inline-shadow rule) ---------- */
+  --elev-1:
+    inset 0 1.5px 0 rgb(var(--hi-rgb) / calc(0.7 * var(--hi-scale))),
+    inset 0 -1.5px 0 rgb(var(--lo-rgb) / calc(0.03 * var(--lo-scale))),
+    calc(var(--tilt-x) * -4px) calc(8px + (0.55 - var(--tilt-y)) * 4px) 14px -6px rgb(var(--cast-rgb) / calc(0.18 * var(--cast-scale)));
+
+  --elev-2:
+    inset 0 2px 0 rgb(var(--hi-rgb) / calc(0.8 * var(--hi-scale))),
+    inset 0 -2px 0 rgb(var(--lo-rgb) / calc(0.04 * var(--lo-scale))),
+    calc(var(--tilt-x) * -8px) calc(14px + (0.55 - var(--tilt-y)) * 6px) 12px -8px rgb(var(--cast-rgb) / calc(0.20 * var(--cast-scale)));
+
+  --elev-3:
+    inset 0 2.5px 0 rgb(var(--hi-rgb) / calc(0.9 * var(--hi-scale))),
+    inset 0 -2px 0 rgb(var(--lo-rgb) / calc(0.05 * var(--lo-scale))),
+    calc(var(--tilt-x) * -14px) calc(22px + (0.55 - var(--tilt-y)) * 10px) 34px -10px rgb(var(--cast-rgb) / calc(0.25 * var(--cast-scale)));
+
+  --elev-pressed:
+    inset 0 1px 0 rgb(var(--hi-rgb) / calc(0.4 * var(--hi-scale))),
+    inset 0 -1px 0 rgb(var(--lo-rgb) / calc(0.05 * var(--lo-scale))),
+    calc(var(--tilt-x) * -2px) calc(2px + (0.55 - var(--tilt-y)) * 1px) 6px -2px rgb(var(--cast-rgb) / calc(0.18 * var(--cast-scale)));
+
+  --elev-inset:
+    inset 0 2px 4px rgb(var(--cast-rgb) / calc(0.15 * var(--cast-scale))),
+    inset 0 -1px 0 rgb(var(--hi-rgb) / calc(0.5 * var(--hi-scale)));
+
+  --background: oklch(1 0 0);
+
+  --foreground: oklch(0.145 0 0);
+
+  --card: oklch(1 0 0);
+
+  --card-foreground: oklch(0.145 0 0);
+
+  --popover: oklch(1 0 0);
+
+  --popover-foreground: oklch(0.145 0 0);
+
+  --primary: oklch(0.205 0 0);
+
+  --primary-foreground: oklch(0.985 0 0);
+
+  --secondary: oklch(0.97 0 0);
+
+  --secondary-foreground: oklch(0.205 0 0);
+
+  --muted: oklch(0.97 0 0);
+
+  --muted-foreground: oklch(0.556 0 0);
+
+  --accent: oklch(0.97 0 0);
+
+  --accent-foreground: oklch(0.205 0 0);
+
+  --destructive: oklch(0.577 0.245 27.325);
+
+  --border: oklch(0.922 0 0);
+
+  --input: oklch(0.922 0 0);
+
+  --chart-1: oklch(0.87 0 0);
+
+  --chart-2: oklch(0.556 0 0);
+
+  --chart-3: oklch(0.439 0 0);
+
+  --chart-4: oklch(0.371 0 0);
+
+  --chart-5: oklch(0.269 0 0);
+
+  --radius: 0.625rem;
+
+  --sidebar: oklch(0.985 0 0);
+
+  --sidebar-foreground: oklch(0.145 0 0);
+
+  --sidebar-primary: oklch(0.205 0 0);
+
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+
+  --sidebar-accent: oklch(0.97 0 0);
+
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+
+  --sidebar-border: oklch(0.922 0 0);
+
+  --sidebar-ring: oklch(0.708 0 0);
+}
+
+/* ============================================================
+   UNIVERSAL DARK OVERRIDES — applied to every dark variant.
+   ============================================================ */
+[data-theme$="-dark"] {
+  --hi-rgb:     255 240 210;
+  --hi-scale:   0.13;
+  --lo-rgb:     0 0 0;
+  --lo-scale:   7;
+  --cast-rgb:   0 0 0;
+  --cast-scale: 2.4;
+
+  --tooltip-cast:   rgb(0 0 0 / 0.65);
+  --modal-backdrop: rgba(0, 0, 0, 0.55);
+
+  --ink-inv:      #1E1A14;
+  --ring-color:   rgba(120, 145, 255, 0.55);
+
+  --blue-soft:    rgba(60, 91, 255, 0.18);
+  --green-soft:   rgba(46, 168, 106, 0.18);
+  --amber-soft:   rgba(232, 169, 59, 0.20);
+  --red-soft:     rgba(215, 72, 74, 0.18);
+  --violet-soft:  rgba(122, 91, 255, 0.22);
+  --orange-soft:  rgba(240, 138, 60, 0.20);
+
+  --tint-blue:    rgba(60, 91, 255, 0.20);
+  --tint-green:   rgba(46, 168, 106, 0.20);
+  --tint-amber:   rgba(232, 169, 59, 0.22);
+  --tint-red:     rgba(215, 72, 74, 0.22);
+  --tint-violet:  rgba(122, 91, 255, 0.22);
+  --tint-orange:  rgba(240, 138, 60, 0.22);
+
+  --grain-bottom: rgba(0, 0, 0, 0.22);
+}
+
+[data-theme$="-dark"] [data-slot="badge"][data-variant="success"] { color: #5FD89A; }
+[data-theme$="-dark"] [data-slot="badge"][data-variant="warn"]    { color: #F5C36E; }
+[data-theme$="-dark"] [data-slot="badge"][data-variant="danger"]  { color: #F08688; }
+[data-theme$="-dark"] [data-slot="badge"][data-variant="info"]    { color: #8FA3FF; }
+[data-theme$="-dark"] [data-slot="badge"][data-variant="violet"]  { color: #B5A0FF; }
+
+/* ============================================================
+   WARM tone — dark variant
+   ============================================================ */
+[data-theme="warm-dark"] {
+  --bg:           #1A1610;
+  --bg-deep:      #100C08;
+  --surface:      #261F17;
+  --surface-2:    #1E1812;
+  --surface-3:    #2E2620;
+  --hairline:     rgba(255, 240, 210, 0.07);
+  --ink:          #F5EEDE;
+  --ink-2:        #BFB4A0;
+  --ink-3:        #8A7F6B;
+  --hi-rgb:       255 240 210;
+  --grain-top:    rgba(255, 240, 210, 0.04);
+}
+
+/* ============================================================
+   DAYLIGHT tone
+   ============================================================ */
+[data-theme="daylight-light"] {
+  --bg:           #EFEFEC;
+  --bg-deep:      #E2E2DE;
+  --surface:      #F8F8F6;
+  --surface-2:    #F2F2EF;
+  --surface-3:    #FCFCFB;
+  --hairline:     rgba(30, 30, 28, 0.10);
+  --ink:          #14140F;
+  --ink-2:        #3D3D38;
+  --ink-3:        #76766F;
+  --cast-rgb:     30 30 28;
+  --grain-top:    rgba(255, 255, 255, 0.55);
+  --grain-bottom: rgba(30, 30, 28, 0.06);
+}
+
+[data-theme="daylight-dark"] {
+  --bg:           #161614;
+  --bg-deep:      #0E0E0C;
+  --surface:      #232320;
+  --surface-2:    #1C1C19;
+  --surface-3:    #2B2B27;
+  --hairline:     rgba(245, 245, 240, 0.08);
+  --ink:          #F0F0EC;
+  --ink-2:        #B6B6B0;
+  --ink-3:        #80807A;
+  --hi-rgb:       255 255 250;
+  --grain-top:    rgba(255, 255, 250, 0.04);
+}
+
+/* ============================================================
+   BLUE tone
+   ============================================================ */
+[data-theme="blue-light"] {
+  --bg:           #E4ECF6;
+  --bg-deep:      #D3DEEB;
+  --surface:      #F0F5FB;
+  --surface-2:    #E7EEF7;
+  --surface-3:    #F8FBFE;
+  --hairline:     rgba(20, 40, 80, 0.10);
+  --ink:          #0E1B2E;
+  --ink-2:        #38465B;
+  --ink-3:        #6B7A8E;
+  --cast-rgb:     20 40 80;
+  --grain-top:    rgba(255, 255, 255, 0.55);
+  --grain-bottom: rgba(20, 40, 80, 0.06);
+}
+
+[data-theme="blue-dark"] {
+  --bg:           #0C141F;
+  --bg-deep:      #060B14;
+  --surface:      #16202C;
+  --surface-2:    #111923;
+  --surface-3:    #1D2939;
+  --hairline:     rgba(200, 220, 255, 0.08);
+  --ink:          #E8EEF7;
+  --ink-2:        #A7B4C7;
+  --ink-3:        #6B7991;
+  --hi-rgb:       220 230 250;
+  --hi-scale:     0.14;
+  --cast-scale:   2.8;
+  --grain-top:    rgba(200, 220, 255, 0.04);
+}
+
+/* ============================================================
+   INDIGO tone
+   ============================================================ */
+[data-theme="indigo-light"] {
+  --bg:           #E7E2F4;
+  --bg-deep:      #D5CFE9;
+  --surface:      #F1ECFA;
+  --surface-2:    #E9E3F4;
+  --surface-3:    #F9F5FE;
+  --hairline:     rgba(45, 25, 110, 0.10);
+  --ink:          #19133A;
+  --ink-2:        #3F345E;
+  --ink-3:        #756B95;
+  --cast-rgb:     45 25 110;
+  --grain-top:    rgba(255, 255, 255, 0.55);
+  --grain-bottom: rgba(45, 25, 110, 0.07);
+}
+
+[data-theme="indigo-dark"] {
+  --bg:           #14102A;
+  --bg-deep:      #0A0820;
+  --surface:      #1F1840;
+  --surface-2:    #181232;
+  --surface-3:    #271F4D;
+  --hairline:     rgba(220, 210, 255, 0.08);
+  --ink:          #ECE6FF;
+  --ink-2:        #B0A8D8;
+  --ink-3:        #756B95;
+  --hi-rgb:       230 220 255;
+  --hi-scale:     0.14;
+  --grain-top:    rgba(220, 210, 255, 0.04);
+}
+
+/* ============================================================
+   AMBER tone
+   ============================================================ */
+[data-theme="amber-light"] {
+  --bg:           #F4E7C5;
+  --bg-deep:      #E7D7A9;
+  --surface:      #FBF1D5;
+  --surface-2:    #F5E8C2;
+  --surface-3:    #FEF8E1;
+  --hairline:     rgba(80, 55, 10, 0.10);
+  --ink:          #2A1F08;
+  --ink-2:        #58472A;
+  --ink-3:        #8A7A53;
+  --cast-rgb:     80 55 10;
+  --grain-top:    rgba(255, 250, 230, 0.55);
+  --grain-bottom: rgba(80, 55, 10, 0.07);
+}
+
+[data-theme="amber-dark"] {
+  --bg:           #1C140A;
+  --bg-deep:      #110B05;
+  --surface:      #2C2010;
+  --surface-2:    #221809;
+  --surface-3:    #34281A;
+  --hairline:     rgba(255, 235, 190, 0.08);
+  --ink:          #FAEFD0;
+  --ink-2:        #C7B68A;
+  --ink-3:        #8A7A53;
+  --hi-rgb:       255 235 190;
+  --grain-top:    rgba(255, 235, 190, 0.04);
+}
+
+/* ============================================================
+   EMERALD tone
+   ============================================================ */
+[data-theme="emerald-light"] {
+  --bg:           #DEEAE0;
+  --bg-deep:      #CADAC9;
+  --surface:      #ECF3ED;
+  --surface-2:    #E2ECE3;
+  --surface-3:    #F5FAF6;
+  --hairline:     rgba(10, 50, 25, 0.10);
+  --ink:          #0C2114;
+  --ink-2:        #344B3C;
+  --ink-3:        #688070;
+  --cast-rgb:     10 50 25;
+  --grain-top:    rgba(245, 255, 248, 0.55);
+  --grain-bottom: rgba(10, 50, 25, 0.07);
+}
+
+[data-theme="emerald-dark"] {
+  --bg:           #0E1A14;
+  --bg-deep:      #07100B;
+  --surface:      #16271C;
+  --surface-2:    #111E17;
+  --surface-3:    #1D3225;
+  --hairline:     rgba(220, 245, 230, 0.08);
+  --ink:          #E4F3E9;
+  --ink-2:        #9CB4A4;
+  --ink-3:        #688070;
+  --hi-rgb:       220 245 230;
+  --grain-top:    rgba(220, 245, 230, 0.04);
+}
+
+/* ============================================================
+   HIGH-CONTRAST MODE
+   ============================================================ */
+@media (prefers-contrast: more) {
+  :root {
+    --hi-scale:   1.2;
+    --lo-scale:   2;
+    --cast-scale: 1.6;
+    --hairline:   rgba(30, 30, 28, 0.35);
+    --ring-color: rgba(60, 91, 255, 0.80);
+  }
+  [data-theme$="-dark"] {
+    --hi-scale:   0.25;
+    --lo-scale:   10;
+    --cast-scale: 3.5;
+    --hairline:   rgba(245, 245, 240, 0.30);
+    --ring-color: rgba(120, 145, 255, 0.85);
+  }
+  :root                              { --surface-3: #F2E5C9; }
+  [data-theme="daylight-light"]      { --surface-3: #ECECE8; }
+  [data-theme="blue-light"]          { --surface-3: #E4EDF8; }
+  [data-theme="indigo-light"]        { --surface-3: #E2DCF1; }
+  [data-theme="amber-light"]         { --surface-3: #F0E0AC; }
+  [data-theme="emerald-light"]       { --surface-3: #DEEADF; }
+  [data-theme="warm-dark"]           { --surface-3: #3A3026; }
+  [data-theme="daylight-dark"]       { --surface-3: #38383A; }
+  [data-theme="blue-dark"]           { --surface-3: #243349; }
+  [data-theme="indigo-dark"]         { --surface-3: #2E2560; }
+  [data-theme="amber-dark"]          { --surface-3: #423324; }
+  [data-theme="emerald-dark"]        { --surface-3: #244031; }
+}
+
+/* ============================================================
+   Reduced motion — decision 14: acceptable to kill all transitions
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  :root { --tilt-x: 0; --tilt-y: 0; }
+  * { transition: none !important; }
+}
+
+/* ============================================================
+   @theme inline — expose static tokens as Tailwind v4 utilities.
+   Only STATIC values land here; reactive shadows go through the
+   baskShadow() runtime helper (see lib/bask-shadow.ts).
+   ============================================================ */
+@theme inline {
+  --color-bg:           var(--bg);
+  --color-bg-deep:      var(--bg-deep);
+  --color-surface:      var(--surface);
+  --color-surface-2:    var(--surface-2);
+  --color-surface-3:    var(--surface-3);
+  --color-ink:          var(--ink);
+  --color-ink-2:        var(--ink-2);
+  --color-ink-3:        var(--ink-3);
+  --color-ink-inv:      var(--ink-inv);
+  --color-hairline:     var(--hairline);
+
+  --color-blue:         var(--blue);
+  --color-blue-soft:    var(--blue-soft);
+  --color-green:        var(--green);
+  --color-green-soft:   var(--green-soft);
+  --color-amber:        var(--amber);
+  --color-amber-soft:   var(--amber-soft);
+  --color-red:          var(--red);
+  --color-red-soft:     var(--red-soft);
+  --color-violet:       var(--violet);
+  --color-violet-soft:  var(--violet-soft);
+  --color-orange:       var(--orange);
+  --color-orange-soft:  var(--orange-soft);
+
+  --color-tint-blue:    var(--tint-blue);
+  --color-tint-green:   var(--tint-green);
+  --color-tint-amber:   var(--tint-amber);
+  --color-tint-red:     var(--tint-red);
+  --color-tint-violet:  var(--tint-violet);
+  --color-tint-orange:  var(--tint-orange);
+
+  --radius-xs:   var(--r-xs);
+  --radius-sm:   var(--r-sm);
+  --radius-md:   var(--r-md);
+  --radius-lg:   var(--r-lg);
+  --radius-xl:   var(--r-xl);
+  --radius-pill: var(--r-pill);
+
+  --font-sans: var(--font-sans);
+  --font-display: var(--font-display);
+
+  /* Only the inset is safe as a Tailwind utility (no parallax). */
+  --shadow-bask-inset: var(--elev-inset);
+}
+
+/* ============================================================
+   Base body styles + page grain (decision 13)
+   ============================================================ */
+html, body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: var(--fs-14);
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+  background:
+    radial-gradient(1200px 800px at 20% 0%, var(--grain-top), transparent 60%),
+    radial-gradient(900px 700px at 100% 100%, var(--grain-bottom), transparent 60%);
+}
+
+/* ============================================================
+   Typography + layout primitives (ported from prototype)
+   Reactive to theme via tokens; keep in sync with
+   prototype/components.css:26-57.
+   ============================================================ */
+.page {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 56px 32px 96px;
+}
+
+h1, h2, h3 { margin: 0; }
+h1 {
+  font-family: var(--font-display);
+  font-size: var(--fs-36);
+  font-weight: 600;
+  letter-spacing: var(--tracking-display);
+  line-height: var(--lh-display);
+}
+h2 {
+  font-family: var(--font-display);
+  font-size: var(--fs-28);
+  font-weight: 600;
+  letter-spacing: var(--tracking-display);
+  line-height: var(--lh-display);
+}
+h3 {
+  font-size: var(--fs-16);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.eyebrow {
+  font-size: var(--fs-12);
+  font-weight: 700;
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.muted { color: var(--ink-3); }
+
+.section { margin-top: 56px; }
+.section > h2 { margin-bottom: 20px; }
+
+/* ============================================================
+   BASK COMPONENT OVERRIDES — shadows and interactive states
+   Box-shadow references var(--tilt-x)/var(--tilt-y) directly
+   so the proximity-light provider can update them per frame.
+   ============================================================ */
+
+/* --- Button ---
+   --btn-hi/--btn-lo defaults live in @layer components so that the per-variant
+   Tailwind utility overrides (e.g. [--btn-hi:rgba(...)]) in @layer utilities
+   can win the cascade. The box-shadow rules stay unlayered (highest priority)
+   so they're never overridden by utilities, while var(--btn-hi) resolves to
+   whichever value won — the utility override for colored variants, or the
+   components-layer default for the cream default button. */
+@layer components {
+  [data-slot="button"] {
+    --btn-hi: rgb(var(--hi-rgb) / calc(0.9 * var(--hi-scale)));
+    --btn-lo: rgb(var(--lo-rgb) / calc(0.07 * var(--lo-scale)));
+  }
+}
+[data-slot="button"] {
+  box-shadow:
+    inset 0 2px 0 var(--btn-hi),
+    inset 0 -2px 0 var(--btn-lo),
+    calc(var(--tilt-x) * -8px) calc(14px + (0.55 - var(--tilt-y)) * 6px) 12px -8px rgb(var(--cast-rgb) / calc(0.28 * var(--cast-scale)));
+  transition: box-shadow var(--dur-fast) var(--ease), background var(--dur) var(--ease);
+  will-change: box-shadow;
+}
+[data-slot="button"]:hover {
+  box-shadow:
+    inset 0 2px 0 var(--btn-hi),
+    inset 0 -2px 0 var(--btn-lo),
+    calc(var(--tilt-x) * -10px) calc(17px + (0.55 - var(--tilt-y)) * 7px) 16px -8px rgb(var(--cast-rgb) / calc(0.34 * var(--cast-scale)));
+}
+[data-slot="button"]:active {
+  box-shadow:
+    inset 0 1px 0 var(--btn-hi),
+    inset 0 -1px 0 var(--btn-lo),
+    calc(var(--tilt-x) * -2px) calc(4px + (0.55 - var(--tilt-y)) * 1px) 6px -2px rgb(var(--cast-rgb) / calc(0.22 * var(--cast-scale)));
+  transition-duration: 80ms;
+}
+[data-slot="button"]:focus-visible {
+  outline: none;
+  box-shadow:
+    inset 0 2px 0 var(--btn-hi),
+    inset 0 -2px 0 var(--btn-lo),
+    calc(var(--tilt-x) * -8px) calc(14px + (0.55 - var(--tilt-y)) * 6px) 12px -8px rgb(var(--cast-rgb) / calc(0.28 * var(--cast-scale))),
+    var(--ring);
+}
+[data-slot="button"]:disabled { pointer-events: none; opacity: 0.5; box-shadow: none; }
+
+/* --- Card --- */
+[data-slot="card"] {
+  box-shadow:
+    inset 0 2px 0 rgb(var(--hi-rgb) / calc(0.8 * var(--hi-scale))),
+    inset 0 -2px 0 rgb(var(--lo-rgb) / calc(0.04 * var(--lo-scale))),
+    calc(var(--tilt-x) * -8px) calc(14px + (0.55 - var(--tilt-y)) * 6px) 12px -8px rgb(var(--cast-rgb) / calc(0.20 * var(--cast-scale)));
+  transition: box-shadow var(--dur) var(--ease);
+  will-change: box-shadow;
+}
+[data-slot="card"].hover-lift:hover {
+  box-shadow:
+    inset 0 2.5px 0 rgb(var(--hi-rgb) / calc(0.9 * var(--hi-scale))),
+    inset 0 -2px 0 rgb(var(--lo-rgb) / calc(0.05 * var(--lo-scale))),
+    calc(var(--tilt-x) * -14px) calc(22px + (0.55 - var(--tilt-y)) * 10px) 34px -10px rgb(var(--cast-rgb) / calc(0.25 * var(--cast-scale)));
+}
+
+/* --- Badge ---
+   Same cascade trick as buttons (see CLAUDE.md): per-variant utilities
+   override --badge-hi/--badge-lo defaults from @layer components, and the
+   unlayered box-shadow rule wins regardless. White inset on saturated soft
+   backgrounds reads as a hard band — colored variants dial it back. */
+@layer components {
+  [data-slot="badge"] {
+    --badge-hi: rgb(var(--hi-rgb) / calc(0.7 * var(--hi-scale)));
+    --badge-lo: rgb(var(--lo-rgb) / calc(0.03 * var(--lo-scale)));
+  }
+}
+[data-slot="badge"] {
+  box-shadow:
+    inset 0 1.5px 0 var(--badge-hi),
+    inset 0 -1.5px 0 var(--badge-lo),
+    calc(var(--tilt-x) * -4px) calc(8px + (0.55 - var(--tilt-y)) * 4px) 14px -6px rgb(var(--cast-rgb) / calc(0.18 * var(--cast-scale)));
+  transition: box-shadow var(--dur) var(--ease);
+}
+
+/* --- Avatar --- */
+[data-slot="avatar"] {
+  box-shadow:
+    inset 0 2px 0 rgba(255,255,255,0.28),
+    inset 0 -2px 0 rgba(0,0,0,0.18),
+    calc(var(--tilt-x) * -5px) calc(8px + (0.55 - var(--tilt-y)) * 4px) 14px -4px rgb(var(--cast-rgb) / calc(0.30 * var(--cast-scale)));
+}
+
+/* --- Input / Textarea / Select trigger (all recessed) --- */
+[data-slot="input"],
+[data-slot="textarea"],
+[data-slot="select-trigger"] {
+  box-shadow: var(--elev-inset);
+  transition: box-shadow var(--dur) var(--ease), background-color var(--dur) var(--ease);
+}
+[data-slot="input"]:hover,
+[data-slot="textarea"]:hover,
+[data-slot="select-trigger"]:hover {
+  box-shadow:
+    inset 0 2px 5px rgb(var(--cast-rgb) / calc(0.20 * var(--cast-scale))),
+    inset 0 -1px 0 rgb(var(--hi-rgb) / calc(0.55 * var(--hi-scale)));
+}
+[data-slot="input"]:focus,
+[data-slot="textarea"]:focus {
+  outline: none;
+  background-color: var(--surface-3);
+  box-shadow:
+    inset 0 2px 4px rgb(var(--cast-rgb) / calc(0.15 * var(--cast-scale))),
+    inset 0 -1px 0 rgb(var(--hi-rgb) / calc(0.6 * var(--hi-scale))),
+    0 0 0 3px var(--ring-color);
+}
+[data-slot="select-trigger"][aria-expanded="true"] {
+  background-color: var(--surface-3);
+  box-shadow:
+    inset 0 2px 4px rgb(var(--cast-rgb) / calc(0.15 * var(--cast-scale))),
+    inset 0 -1px 0 rgb(var(--hi-rgb) / calc(0.6 * var(--hi-scale))),
+    0 0 0 3px var(--ring-color);
+}
+[data-slot="input"]:disabled,
+[data-slot="textarea"]:disabled,
+[data-slot="select-trigger"]:disabled { opacity: 0.55; cursor: not-allowed; }
+
+/* --- Checkbox (recessed → elevated on check) --- */
+[data-slot="checkbox"] {
+  box-shadow: var(--elev-inset);
+  transition: background var(--dur-fast) var(--ease), box-shadow var(--dur-fast) var(--ease);
+}
+[data-slot="checkbox"][data-checked] {
+  background-color: var(--blue);
+  box-shadow: var(--elev-1);
+}
+[data-slot="checkbox"]:focus-visible {
+  box-shadow: var(--elev-inset), 0 0 0 3px var(--ring-color);
+}
+[data-slot="checkbox"][data-checked]:focus-visible {
+  box-shadow: var(--elev-1), 0 0 0 3px var(--ring-color);
+}
+
+/* --- Radio (recessed → elevated on check) --- */
+[data-slot="radio-group-item"] {
+  box-shadow: var(--elev-inset);
+  transition: background var(--dur-fast) var(--ease), box-shadow var(--dur-fast) var(--ease);
+}
+[data-slot="radio-group-item"][data-checked] {
+  background-color: var(--blue);
+  box-shadow: var(--elev-1);
+}
+[data-slot="radio-group-item"]:focus-visible {
+  box-shadow: var(--elev-inset), 0 0 0 3px var(--ring-color);
+}
+[data-slot="radio-group-item"][data-checked]:focus-visible {
+  box-shadow: var(--elev-1), 0 0 0 3px var(--ring-color);
+}
+
+/* --- Switch track --- */
+[data-slot="switch"] {
+  box-shadow: var(--elev-inset);
+  transition: background var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
+}
+[data-slot="switch"]:focus-visible {
+  box-shadow: var(--elev-inset), 0 0 0 3px var(--ring-color);
+}
+/* --- Switch thumb --- */
+[data-slot="switch-thumb"] {
+  box-shadow:
+    inset 0 1.5px 0 rgb(var(--hi-rgb) / calc(0.9 * var(--hi-scale))),
+    inset 0 -1px 0 rgb(var(--lo-rgb) / calc(0.10 * var(--lo-scale))),
+    calc(var(--tilt-x) * -3px) calc(3px + (0.55 - var(--tilt-y)) * 2px) 5px rgb(var(--cast-rgb) / calc(0.28 * var(--cast-scale)));
+}
+
+/* --- Tabs list (pill track is recessed; line variant is flat) --- */
+[data-slot="tabs-list"][data-variant="pill"] { box-shadow: var(--elev-inset); }
+[data-slot="tabs-list"][data-variant="pill"] [data-slot="tabs-trigger"][data-active] {
+  box-shadow: var(--elev-1);
+}
+[data-slot="tabs-list"][data-variant="pill"] [data-slot="tabs-trigger"]:focus-visible {
+  outline: none;
+  box-shadow: var(--elev-1), 0 0 0 3px var(--ring-color);
+}
+[data-slot="tabs-list"][data-variant="line"] [data-slot="tabs-trigger"]:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--ring-color);
+  border-radius: var(--r-xs);
+}
+
+/* --- Tooltip content --- */
+[data-slot="tooltip-content"] {
+  box-shadow:
+    calc(var(--tilt-x) * -4px) calc(6px + (0.55 - var(--tilt-y)) * 3px) 12px -2px var(--tooltip-cast);
+}
+
+/* --- Dropdown menu / select popup --- */
+[data-slot="dropdown-menu-content"],
+[data-slot="select-content"] { box-shadow: var(--elev-3); }
+
+/* --- Dialog backdrop & content --- */
+[data-slot="dialog-overlay"] {
+  background: var(--modal-backdrop) !important;
+  backdrop-filter: blur(8px) saturate(130%);
+  -webkit-backdrop-filter: blur(8px) saturate(130%);
+}
+[data-slot="dialog-content"] { box-shadow: var(--elev-3); }
+
+/* --- Stat tile --- */
+[data-slot="stat"] {
+  box-shadow:
+    inset 0 2px 0 rgb(var(--hi-rgb) / calc(0.8 * var(--hi-scale))),
+    inset 0 -2px 0 rgb(var(--lo-rgb) / calc(0.04 * var(--lo-scale))),
+    calc(var(--tilt-x) * -8px) calc(14px + (0.55 - var(--tilt-y)) * 6px) 12px -8px rgb(var(--cast-rgb) / calc(0.20 * var(--cast-scale)));
+  transition: box-shadow var(--dur) var(--ease);
+  will-change: box-shadow;
+}
+[data-slot="stat"]:hover {
+  box-shadow:
+    inset 0 2.5px 0 rgb(var(--hi-rgb) / calc(0.9 * var(--hi-scale))),
+    inset 0 -2px 0 rgb(var(--lo-rgb) / calc(0.05 * var(--lo-scale))),
+    calc(var(--tilt-x) * -14px) calc(22px + (0.55 - var(--tilt-y)) * 10px) 34px -10px rgb(var(--cast-rgb) / calc(0.25 * var(--cast-scale)));
+}
+
+/* --- Swatch (color picker chip) --- */
+[data-slot="swatch"] {
+  box-shadow:
+    inset 0 2px 0 rgba(255,255,255,0.32),
+    inset 0 -2px 0 rgba(0,0,0,0.15),
+    calc(var(--tilt-x) * -4px) calc(6px + (0.55 - var(--tilt-y)) * 3px) 12px -4px rgb(var(--cast-rgb) / calc(0.28 * var(--cast-scale)));
+  transition: box-shadow var(--dur) var(--ease);
+  will-change: box-shadow;
+}
+[data-slot="swatch"][data-active] {
+  outline: 3px solid var(--surface);
+  outline-offset: -6px;
+  box-shadow:
+    0 0 0 2px var(--ink),
+    inset 0 2px 0 rgba(255,255,255,0.32),
+    inset 0 -2px 0 rgba(0,0,0,0.15),
+    calc(var(--tilt-x) * -4px) calc(6px + (0.55 - var(--tilt-y)) * 3px) 12px -4px rgb(var(--cast-rgb) / calc(0.28 * var(--cast-scale)));
+}
+
+/* --- LockCard (same cast geometry as card) --- */
+[data-slot="lock-card"] {
+  box-shadow:
+    inset 0 2px 0 rgb(var(--hi-rgb) / calc(0.8 * var(--hi-scale))),
+    inset 0 -2px 0 rgb(var(--lo-rgb) / calc(0.04 * var(--lo-scale))),
+    calc(var(--tilt-x) * -8px) calc(14px + (0.55 - var(--tilt-y)) * 6px) 12px -8px rgb(var(--cast-rgb) / calc(0.20 * var(--cast-scale)));
+  transition: box-shadow var(--dur) var(--ease);
+  will-change: box-shadow;
+}
+
+/* --- Choice row (recessed → elevated on check via :has) --- */
+[data-slot="choice"] {
+  box-shadow: var(--elev-1);
+  transition: box-shadow var(--dur) var(--ease);
+}
+[data-slot="choice"]:hover,
+[data-slot="choice"]:has(input:checked) {
+  box-shadow: var(--elev-2);
+}
+[data-slot="choice"]:has(input:disabled) { opacity: 0.55; cursor: not-allowed; }
+
+/* --- Nav item focus ring --- */
+[data-slot="nav-item"]:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--ring-color);
+}
+[data-slot="nav-item"][data-active]:focus-visible {
+  outline: none;
+  box-shadow: var(--elev-1), 0 0 0 3px var(--ring-color);
+}
+
+/* --- Swatch focus ring --- */
+[data-slot="swatch"]:focus-visible {
+  outline: none;
+  box-shadow:
+    inset 0 2px 0 rgba(255,255,255,0.32),
+    inset 0 -2px 0 rgba(0,0,0,0.15),
+    calc(var(--tilt-x) * -4px) calc(6px + (0.55 - var(--tilt-y)) * 3px) 12px -4px rgb(var(--cast-rgb) / calc(0.28 * var(--cast-scale))),
+    0 0 0 3px var(--ring-color);
+}
+
+/* --- Stepper button focus ring --- */
+[data-slot="stepper"] button:focus-visible {
+  outline: none;
+  box-shadow: inset 0 0 0 2px var(--ring-color);
+  position: relative;
+  z-index: 1;
+}
+
+/* --- Select trigger focus ring --- */
+[data-slot="select-trigger"]:focus-visible {
+  outline: none;
+  background-color: var(--surface-3);
+  box-shadow:
+    inset 0 2px 4px rgb(var(--cast-rgb) / calc(0.15 * var(--cast-scale))),
+    inset 0 -1px 0 rgb(var(--hi-rgb) / calc(0.6 * var(--hi-scale))),
+    0 0 0 3px var(--ring-color);
+}
+
+/* --- High-contrast outlines for component overrides --- */
+@media (prefers-contrast: more) {
+  [data-slot="button"],
+  [data-slot="card"],
+  [data-slot="badge"],
+  [data-slot="stat"],
+  [data-slot="swatch"],
+  [data-slot="lock-card"],
+  [data-slot="choice"],
+  [data-slot="stepper"],
+  [data-slot="input"],
+  [data-slot="textarea"],
+  [data-slot="select-trigger"],
+  [data-slot="dialog-content"],
+  [data-slot="dropdown-menu-content"],
+  [data-slot="select-content"],
+  [data-slot="tabs-list"],
+  [data-slot="switch"],
+  [data-slot="checkbox"],
+  [data-slot="radio-group-item"] {
+    outline: 1px solid var(--hairline);
+    outline-offset: -1px;
+  }
+}

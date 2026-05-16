@@ -1,6 +1,6 @@
 # Bask — Implementation Plan
 
-End-to-end plan for shipping the **Bask design system** as a Next.js 15 + shadcn application. The HTML prototype in `prototype/` is the visual source of truth; the mocks in `docs/mocks/` are the original references.
+End-to-end plan for shipping the **Bask design system** as a Next.js 16 + shadcn application. The HTML prototype in `prototype/` is the visual source of truth; the mocks in `docs/mocks/` are the original references.
 
 > **Status**: Prototype (Milestone 0) is substantially complete — the gallery covers all components, forms, overlays, and navigation that the four target pages require. Next.js app has not been scaffolded yet.
 
@@ -21,7 +21,7 @@ End-to-end plan for shipping the **Bask design system** as a Next.js 15 + shadcn
 
 | Layer            | Choice                                  | Why                                                                 |
 |------------------|-----------------------------------------|---------------------------------------------------------------------|
-| Framework        | Next.js 15 (App Router)                 | Server components by default; the motion provider is the only client island. |
+| Framework        | Next.js 16 (App Router) + React 19      | Current `create-next-app` default. Server components by default; the motion provider is the only client island. Next 16 has breaking changes vs. training-data Next — consult `node_modules/next/dist/docs/` before writing Next-specific code. |
 | Language         | TypeScript (strict)                     | —                                                                   |
 | Styling          | Tailwind CSS v4 (CSS-first `@theme inline`) | Lets us paste the prototype's tokens directly — no `tailwind.config.ts`. |
 | Components       | shadcn/ui (Radix primitives)            | Visual layer is overridden; behavior/accessibility stays.           |
@@ -44,8 +44,15 @@ clay-system/
 │  ├─ components.css          # all components; reactive ones inline their shadow
 │  └─ index.html              # gallery + inline JS for motion / tabs / overlays
 ├─ index.html.html            # legacy claymorphism reference; not part of the system
-└─ app/                       # Next.js 15 app — to be scaffolded (Milestone 1)
-   └─ … (see Section 6 for planned layout)
+├─ app/                       # Next.js 16 App Router — scaffolded (Milestone 1 done)
+│  ├─ globals.css             # tokens + @theme inline + body grain
+│  ├─ layout.tsx              # next/font Inter+Fraunces, BaskMotionProvider mount
+│  └─ page.tsx                # smoke test page (replaced in Milestone 6)
+├─ lib/
+│  ├─ bask-shadow.ts          # 10-key enum + focusRing/inkRing modifiers (Milestone 2)
+│  └─ motion/
+│     └─ bask-motion-provider.tsx  # client island + useBaskTilt (Milestone 3)
+└─ public/                    # static assets
 ```
 
 ---
@@ -123,9 +130,16 @@ Reduced motion: `matchMedia('(prefers-reduced-motion: reduce)')` — bail before
 
 No mobile DeviceOrientation. Touch events are skipped (no hover semantics). The model is desktop-first; mobile gets static gravity shadows.
 
-### 5.2 No `useBaskTilt()` hook
+### 5.2 `useBaskTilt()` is a ref-registration hook, not an amplifier
 
-The old plan called for a per-element hover hook to *amplify* a global tilt. That's obsolete: the proximity model already computes per-element response from one global cursor position. Components don't need per-element wiring — they just need to be in the provider's SELECTOR (or pass a ref to a registration helper if more dynamic).
+Per milestone-0 decision 3(b), `useBaskTilt()` returns a ref callback that registers the element with the provider's `Set<HTMLElement>`. The provider iterates that set each frame — no DOM querying, no `MutationObserver`. The proximity model already computes per-element response from one global cursor position, so the hook does no per-element math.
+
+```tsx
+function Card(props) {
+  const tiltRef = useBaskTilt();
+  return <div ref={tiltRef} style={{ boxShadow: baskShadow('card') }} {...props} />;
+}
+```
 
 ### 5.3 Press state
 
@@ -142,7 +156,7 @@ Buttons expose `--btn-hi` (top-edge inset highlight color) and `--btn-lo` (botto
 - One rAF loop, gated.
 - One `getBoundingClientRect` per elevated element per frame (~50 nodes). Reads batched (no interleaved writes that affect layout — custom-property writes don't reflow).
 - Two `style.setProperty` writes per element per frame.
-- `MutationObserver` on `document.body` refreshes the element list when overlays mount.
+- Elements register themselves via `useBaskTilt()` — provider iterates a `Set<HTMLElement>`. No `MutationObserver`, no DOM querying.
 - No React state for motion; provider mounts the listener and stays out of the render loop.
 
 ---
@@ -216,14 +230,14 @@ All four pages live under the same `<BaskMotionProvider>` mounted in the root la
 | # | Milestone                          | Status | Deliverable                                                                            |
 |---|------------------------------------|--------|----------------------------------------------------------------------------------------|
 | 0 | Prototype                          | **Done** | `prototype/` — gallery covering cards, stats, badges, buttons, table, forms (input/textarea/select/switch/checkbox/radio), overlays (tooltip/dropdown/modal), navigation (sidebar/breadcrumbs/tabs). Motion model finalized (proximity light). Press policy finalized (no translate). |
-| 1 | Scaffold app                       | Next   | `npm create next-app` → Next 15 / TS / Tailwind v4 / App Router under `app/`.          |
-| 2 | Tokens → Tailwind theme            |        | `globals.css` pastes prototype tokens, exposes static ones via `@theme inline`. Set up `baskShadow()` helper for reactive shadows. |
-| 3 | Motion provider                    |        | `BaskMotionProvider`, reduced-motion guard. No `useBaskTilt` hook (obsolete).          |
-| 4 | shadcn install + overrides         |        | Install Button, Card, Badge, Table, Avatar, Checkbox, RadioGroup, Switch, Input, Textarea, Select, Tooltip, DropdownMenu, Dialog, Tabs, NavigationMenu, Separator; override visuals from prototype. |
-| 5 | Bask composites                    |        | `Stat`, `Stepper`, `Swatch`, `LockCard`, `AvatarInitials`, `Breadcrumbs`, `Choice`. Replace emoji with `lucide-react`. |
+| 1 | Scaffold app                       | **Done** | Next 16.2.6 / React 19.2.4 / TS / Tailwind v4 / App Router under `app/` at repo root. |
+| 2 | Tokens → Tailwind theme            | **Done** | `globals.css` inlines prototype tokens, exposes static ones via `@theme inline`. `baskShadow()` helper in `lib/bask-shadow.ts` with 10-key enum + `focusRing`/`inkRing` modifiers (per milestone-0 decision 1). |
+| 3 | Motion provider                    | **Done** | `BaskMotionProvider` in `lib/motion/bask-motion-provider.tsx` with `useBaskTilt()` ref-registration (decision 3b — no `MutationObserver`). Reduced-motion guard. |
+| 4 | shadcn install + overrides         | **Done** | shadcn 4.7 (Base UI primitives). All 17 components installed + Bask visual overrides. Shadows in globals.css via `[data-slot]` selectors so hover/active work natively. Reactive elements (Button/Card/Badge/Avatar) register with `useBaskTilt()`. Note: Base UI uses `render` prop instead of `asChild` for trigger composition. |
+| 5 | Bask composites                    | **Done** | `Stat`, `Stepper`, `Swatch`, `LockCard`, `AvatarInitials`, `Breadcrumbs`, `Choice`. Emoji replaced with `lucide-react`. Shadows in globals.css via `[data-slot]` selectors. |
 | 6 | Sample pages                       |        | Dashboard, customers, article, product. Each verified against its mock.                |
-| 7 | Polish                             |        | Focus rings, keyboard nav, contrast audit, prefers-reduced-motion verification.        |
-| 8 | A11y + perf pass                   |        | axe scan, Lighthouse, verify no INP regressions from proximity-light parallax on low-end devices. |
+| 7 | Polish                             | **Done** | Focus rings on all interactive elements (button, checkbox, radio, switch, tabs, nav-item, swatch, stepper, select, breadcrumb links). `--ring` token fixed (was shadcn gray, now `0 0 0 3px var(--ring-color)`). Skip-to-main link in layout. `aria-label` on icon-only buttons. Motion provider live-responds to `prefers-reduced-motion` changes. |
+| 8 | A11y + perf pass                   | **Done** | BadgeDot aria-hidden; AvatarInitials aria-label={name} + aria-hidden on initials text; Stepper aria-live + richer button labels; customers search aria-label + select-all indeterminate prop; article blurred paywall aria-hidden + `<article>` element; StarRating role="img" + aria-label + aria-hidden on stars; resize listener passive. Build clean, no TS errors. |
 
 Each milestone ends with a screenshot review against `docs/mocks/`.
 
