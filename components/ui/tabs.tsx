@@ -19,7 +19,7 @@ function Tabs({
   )
 }
 
-/** Pill-style segmented control (default). Pass variant="line" for underline tabs. */
+/** Pill-style segmented control (default). Pass variant="line" for groove tabs. */
 function TabsList({
   className,
   variant = "pill",
@@ -32,7 +32,7 @@ function TabsList({
       className={cn(
         variant === "pill"
           ? "inline-flex items-center gap-0.5 p-1 rounded-md bg-surface-2"
-          : "flex items-center gap-6 border-b border-[color:var(--hairline)] bg-transparent",
+          : "flex items-center border-b border-[color:var(--hairline)] bg-transparent",
         className
       )}
       {...props}
@@ -52,10 +52,12 @@ function TabsTrigger({ className, ...props }: TabsPrimitive.Tab.Props) {
         "hover:text-ink-2",
         // Active pill
         "data-active:bg-surface data-active:text-ink",
-        // Line variant override
-        "in-[[data-variant=line]]:rounded-none in-[[data-variant=line]]:px-0 in-[[data-variant=line]]:py-3 in-[[data-variant=line]]:text-[length:var(--fs-14)]",
-        "in-[[data-variant=line]]:data-active:text-ink in-[[data-variant=line]]:data-active:font-semibold",
-        "in-[[data-variant=line]]:data-active:after:content-[''] in-[[data-variant=line]]:data-active:after:absolute in-[[data-variant=line]]:data-active:after:bottom-[-1px] in-[[data-variant=line]]:data-active:after:inset-x-0 in-[[data-variant=line]]:data-active:after:h-0.5 in-[[data-variant=line]]:data-active:after:bg-blue in-[[data-variant=line]]:data-active:after:rounded-[2px_2px_0_0]",
+        // Line (groove) variant base
+        "in-[[data-variant=line]]:rounded-[var(--r-sm)_var(--r-sm)_0_0] in-[[data-variant=line]]:px-5 in-[[data-variant=line]]:py-[10px]",
+        "in-[[data-variant=line]]:text-[length:var(--fs-14)] in-[[data-variant=line]]:font-medium",
+        // Line active: inset shadow, background, overlap the hairline
+        "in-[[data-variant=line]]:data-active:bg-surface-2 in-[[data-variant=line]]:data-active:text-ink in-[[data-variant=line]]:data-active:font-semibold",
+        "in-[[data-variant=line]]:data-active:shadow-[var(--elev-inset)] in-[[data-variant=line]]:data-active:-mb-px in-[[data-variant=line]]:data-active:pb-[11px]",
         "disabled:pointer-events-none disabled:opacity-50",
         className
       )}
