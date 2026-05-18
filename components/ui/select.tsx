@@ -5,6 +5,9 @@ import { Select as SelectPrimitive } from "@base-ui/react/select"
 
 import { cn } from "@/lib/utils"
 import { ChevronDownIcon, ChevronUpIcon, CheckIcon } from "lucide-react"
+import { tweenFast } from "@/lib/motion/presets"
+import { useReducedMotionSafe } from "@/lib/motion/use-reduced-motion-safe"
+import { popupRender } from "@/lib/motion/overlay"
 
 const Select = SelectPrimitive.Root
 
@@ -65,6 +68,7 @@ function SelectContent({
   ...props
 }: SelectPrimitive.Popup.Props &
   Pick<SelectPrimitive.Positioner.Props, "align" | "alignOffset" | "side" | "sideOffset" | "alignItemWithTrigger">) {
+  const transition = useReducedMotionSafe(tweenFast)
   return (
     <SelectPrimitive.Portal>
       <SelectPrimitive.Positioner
@@ -81,10 +85,9 @@ function SelectContent({
             "relative isolate z-50 max-h-[var(--available-height)] w-[var(--anchor-width)] min-w-36",
             "bg-surface rounded-md p-1.5 text-ink overflow-x-hidden overflow-y-auto",
             "origin-[var(--transform-origin)]",
-            "data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95",
-            "data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
             className
           )}
+          render={popupRender(transition, { closedScale: 0.95 })}
           {...props}
         >
           <SelectScrollUpButton />

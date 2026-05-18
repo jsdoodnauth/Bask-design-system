@@ -2,10 +2,14 @@
 
 import * as React from "react"
 import { Dialog as DialogPrimitive } from "@base-ui/react/dialog"
+import { motion, type HTMLMotionProps } from "framer-motion"
 import { XIcon } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
+import { springSoft, tweenBase } from "@/lib/motion/presets"
+import { useReducedMotionSafe } from "@/lib/motion/use-reduced-motion-safe"
+import { backdropRender } from "@/lib/motion/overlay"
 
 type Side = "top" | "right" | "bottom" | "left"
 
@@ -22,29 +26,33 @@ function SheetClose({ ...props }: DialogPrimitive.Close.Props) {
 }
 
 function SheetPortal({ ...props }: DialogPrimitive.Portal.Props) {
-  return <DialogPrimitive.Portal data-slot="sheet-portal" {...props} />
+  return <DialogPrimitive.Portal data-slot="sheet-portal" keepMounted {...props} />
 }
 
 function SheetOverlay({ className, ...props }: DialogPrimitive.Backdrop.Props) {
+  const transition = useReducedMotionSafe(tweenBase)
   return (
     <DialogPrimitive.Backdrop
       data-slot="sheet-overlay"
-      className={cn(
-        "fixed inset-0 isolate z-50",
-        "data-open:animate-in data-open:fade-in-0",
-        "data-closed:animate-out data-closed:fade-out-0",
-        className
-      )}
+      className={cn("fixed inset-0 isolate z-50", className)}
+      render={backdropRender(transition)}
       {...props}
     />
   )
 }
 
-const sideClasses: Record<Side, string> = {
-  top:    "inset-x-0 top-0 max-h-[85vh] border-b border-[var(--hairline)] data-open:slide-in-from-top data-closed:slide-out-to-top",
-  bottom: "inset-x-0 bottom-0 max-h-[85vh] border-t border-[var(--hairline)] data-open:slide-in-from-bottom data-closed:slide-out-to-bottom",
-  left:   "inset-y-0 left-0 max-w-[340px] w-3/4 h-full border-r border-[var(--hairline)] data-open:slide-in-from-left data-closed:slide-out-to-left",
-  right:  "inset-y-0 right-0 max-w-[340px] w-3/4 h-full border-l border-[var(--hairline)] data-open:slide-in-from-right data-closed:slide-out-to-right",
+const sidePositionClasses: Record<Side, string> = {
+  top:    "inset-x-0 top-0 max-h-[85vh] border-b border-[var(--hairline)]",
+  bottom: "inset-x-0 bottom-0 max-h-[85vh] border-t border-[var(--hairline)]",
+  left:   "inset-y-0 left-0 max-w-[340px] w-3/4 h-full border-r border-[var(--hairline)]",
+  right:  "inset-y-0 right-0 max-w-[340px] w-3/4 h-full border-l border-[var(--hairline)]",
+}
+
+const sideClosedOffset: Record<Side, { x?: string; y?: string }> = {
+  top:    { y: "-100%" },
+  bottom: { y: "100%" },
+  left:   { x: "-100%" },
+  right:  { x: "100%" },
 }
 
 type SheetContentProps = DialogPrimitive.Popup.Props & {
@@ -59,6 +67,25 @@ function SheetContent({
   showCloseButton = true,
   ...props
 }: SheetContentProps) {
+  const transition = useReducedMotionSafe(springSoft)
+  const closed = sideClosedOffset[side]
+
+  const render = React.useCallback(
+    (renderProps: React.HTMLAttributes<HTMLDivElement>, state: { open: boolean }) => (
+      <motion.div
+        {...(renderProps as HTMLMotionProps<"div">)}
+        initial={false}
+        animate={{
+          x: state.open ? 0 : closed.x ?? 0,
+          y: state.open ? 0 : closed.y ?? 0,
+          opacity: state.open ? 1 : 0,
+        }}
+        transition={transition}
+      />
+    ),
+    [closed.x, closed.y, transition]
+  )
+
   return (
     <SheetPortal>
       <SheetOverlay />
@@ -67,10 +94,10 @@ function SheetContent({
         data-side={side}
         className={cn(
           "fixed z-50 bg-surface text-ink outline-none p-6 flex flex-col gap-4",
-          "data-open:animate-in data-closed:animate-out [animation-duration:240ms]",
-          sideClasses[side],
+          sidePositionClasses[side],
           className
         )}
+        render={render}
         {...props}
       >
         {children}

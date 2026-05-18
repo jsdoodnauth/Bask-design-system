@@ -3,6 +3,9 @@
 import { Tooltip as TooltipPrimitive } from "@base-ui/react/tooltip"
 
 import { cn } from "@/lib/utils"
+import { tweenFast } from "@/lib/motion/presets"
+import { useReducedMotionSafe } from "@/lib/motion/use-reduced-motion-safe"
+import { popupRender } from "@/lib/motion/overlay"
 
 function TooltipProvider({
   delay = 300,
@@ -35,8 +38,10 @@ function TooltipContent({
   ...props
 }: TooltipPrimitive.Popup.Props &
   Pick<TooltipPrimitive.Positioner.Props, "align" | "alignOffset" | "side" | "sideOffset">) {
+  // ~120ms tween, 2px lift, no scale. Tooltips must feel near-instant.
+  const transition = useReducedMotionSafe({ ...tweenFast, duration: 0.12 })
   return (
-    <TooltipPrimitive.Portal>
+    <TooltipPrimitive.Portal keepMounted>
       <TooltipPrimitive.Positioner
         align={align}
         alignOffset={alignOffset}
@@ -50,10 +55,9 @@ function TooltipContent({
             "inline-flex w-fit max-w-xs items-center gap-1.5 rounded-sm",
             "bg-ink text-ink-inv px-2.5 py-1.5 text-[length:var(--fs-12)] font-medium whitespace-nowrap",
             "origin-[var(--transform-origin)]",
-            "data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95",
-            "data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
             className
           )}
+          render={popupRender(transition, { closedScale: 1, closedY: 2 })}
           {...props}
         >
           {children}

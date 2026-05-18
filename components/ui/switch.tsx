@@ -1,13 +1,37 @@
 "use client"
 
+import * as React from "react"
 import { Switch as SwitchPrimitive } from "@base-ui/react/switch"
+import { motion, type HTMLMotionProps } from "framer-motion"
 
 import { cn } from "@/lib/utils"
+import { useReducedMotionSafe } from "@/lib/motion/use-reduced-motion-safe"
 
-function Switch({
-  className,
-  ...props
-}: SwitchPrimitive.Root.Props) {
+// Track width 46px, thumb size 20px, side inset 3px → travel = 46-20-3-3 = 20px
+const THUMB_TRAVEL_PX = 20
+
+function Switch({ className, ...props }: SwitchPrimitive.Root.Props) {
+  const transition = useReducedMotionSafe({
+    type: "spring",
+    stiffness: 500,
+    damping: 32,
+  })
+
+  const renderThumb = React.useCallback(
+    (
+      thumbProps: React.HTMLAttributes<HTMLSpanElement>,
+      state: { checked: boolean }
+    ) => (
+      <motion.span
+        {...(thumbProps as HTMLMotionProps<"span">)}
+        initial={false}
+        animate={{ x: state.checked ? THUMB_TRAVEL_PX : 0 }}
+        transition={transition}
+      />
+    ),
+    [transition]
+  )
+
   return (
     <SwitchPrimitive.Root
       data-slot="switch"
@@ -22,11 +46,10 @@ function Switch({
       <SwitchPrimitive.Thumb
         data-slot="switch-thumb"
         className={cn(
-          "pointer-events-none absolute size-5 rounded-full bg-surface-3",
-          "left-[3px] data-checked:left-[23px]",
-          "transition-[left] duration-[var(--dur)] ease-[var(--ease)]",
+          "pointer-events-none absolute size-5 rounded-full bg-surface-3 left-[3px]",
           "data-checked:bg-white"
         )}
+        render={renderThumb}
       />
     </SwitchPrimitive.Root>
   )

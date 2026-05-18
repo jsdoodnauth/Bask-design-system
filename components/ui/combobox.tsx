@@ -5,6 +5,9 @@ import { Combobox as ComboboxPrimitive } from "@base-ui/react/combobox"
 import { CheckIcon, ChevronDownIcon, XIcon } from "lucide-react"
 
 import { cn } from "@/lib/utils"
+import { tweenFast } from "@/lib/motion/presets"
+import { useReducedMotionSafe } from "@/lib/motion/use-reduced-motion-safe"
+import { popupRender } from "@/lib/motion/overlay"
 
 function Combobox<Value, Multiple extends boolean | undefined = false>(
   props: ComboboxPrimitive.Root.Props<Value, Multiple>
@@ -94,8 +97,9 @@ function ComboboxContent({
   children,
   ...props
 }: ComboboxContentProps) {
+  const transition = useReducedMotionSafe(tweenFast)
   return (
-    <ComboboxPrimitive.Portal>
+    <ComboboxPrimitive.Portal keepMounted>
       <ComboboxPrimitive.Positioner
         side={side}
         align={align}
@@ -106,10 +110,10 @@ function ComboboxContent({
           data-slot="combobox-content"
           className={cn(
             "min-w-[var(--anchor-width)] max-h-[min(var(--available-height),320px)] overflow-hidden rounded-[var(--r-md)] bg-surface text-ink outline-none",
-            "data-open:animate-in data-open:fade-in-0 data-open:zoom-in-[0.98] data-open:[animation-duration:140ms]",
-            "data-closed:animate-out data-closed:fade-out-0 data-closed:[animation-duration:100ms]",
+            "origin-[var(--transform-origin)]",
             className
           )}
+          render={popupRender(transition, { closedScale: 0.98 })}
           {...props}
         >
           {children}

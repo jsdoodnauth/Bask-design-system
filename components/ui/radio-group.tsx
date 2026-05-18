@@ -2,8 +2,10 @@
 
 import { Radio as RadioPrimitive } from "@base-ui/react/radio"
 import { RadioGroup as RadioGroupPrimitive } from "@base-ui/react/radio-group"
+import { motion } from "framer-motion"
 
 import { cn } from "@/lib/utils"
+import { useReducedMotionSafe } from "@/lib/motion/use-reduced-motion-safe"
 
 function RadioGroup({ className, ...props }: RadioGroupPrimitive.Props) {
   return (
@@ -16,6 +18,12 @@ function RadioGroup({ className, ...props }: RadioGroupPrimitive.Props) {
 }
 
 function RadioGroupItem({ className, ...props }: RadioPrimitive.Root.Props) {
+  const transition = useReducedMotionSafe({
+    type: "spring",
+    visualDuration: 0.18,
+    bounce: 0.3,
+  })
+
   return (
     <RadioPrimitive.Root
       data-slot="radio-group-item"
@@ -29,8 +37,12 @@ function RadioGroupItem({ className, ...props }: RadioPrimitive.Root.Props) {
         data-slot="radio-group-indicator"
         className="flex size-full items-center justify-center"
       >
-        {/* White dot — the background turns blue via globals.css [data-checked] */}
-        <span className="absolute top-1/2 left-1/2 size-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white" />
+        <motion.span
+          className="absolute top-1/2 left-1/2 size-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white"
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={transition}
+        />
       </RadioPrimitive.Indicator>
     </RadioPrimitive.Root>
   )

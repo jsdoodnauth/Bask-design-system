@@ -2,9 +2,12 @@
 
 import * as React from "react"
 import { Accordion as AccordionPrimitive } from "@base-ui/react/accordion"
+import { motion, type HTMLMotionProps } from "framer-motion"
 import { ChevronDownIcon } from "lucide-react"
 
 import { cn } from "@/lib/utils"
+import { tweenBase } from "@/lib/motion/presets"
+import { useReducedMotionSafe } from "@/lib/motion/use-reduced-motion-safe"
 
 function Accordion({ ...props }: AccordionPrimitive.Root.Props) {
   return <AccordionPrimitive.Root data-slot="accordion" {...props} />
@@ -50,15 +53,32 @@ function AccordionPanel({
   children,
   ...props
 }: AccordionPrimitive.Panel.Props) {
+  const transition = useReducedMotionSafe(tweenBase)
+
+  const render = React.useCallback(
+    (renderProps: React.HTMLAttributes<HTMLDivElement>, state: { open: boolean }) => (
+      <motion.div
+        {...(renderProps as HTMLMotionProps<"div">)}
+        initial={false}
+        animate={{
+          height: state.open ? "auto" : 0,
+          opacity: state.open ? 1 : 0,
+        }}
+        transition={transition}
+        style={{ overflow: "hidden" }}
+      />
+    ),
+    [transition]
+  )
+
   return (
     <AccordionPrimitive.Panel
       data-slot="accordion-panel"
       className={cn(
-        "overflow-hidden text-[length:var(--fs-14)] text-ink-2 leading-[var(--lh-body)]",
-        "h-[var(--accordion-panel-height)] transition-[height] duration-200 ease-out",
-        "data-starting-style:h-0 data-ending-style:h-0",
+        "text-[length:var(--fs-14)] text-ink-2 leading-[var(--lh-body)]",
         className
       )}
+      render={render}
       {...props}
     >
       <div className="pb-4 pt-0">{children}</div>

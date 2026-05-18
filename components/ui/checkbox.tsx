@@ -1,10 +1,17 @@
 "use client"
 
 import { Checkbox as CheckboxPrimitive } from "@base-ui/react/checkbox"
+import { motion } from "framer-motion"
 
 import { cn } from "@/lib/utils"
+import { useReducedMotionSafe } from "@/lib/motion/use-reduced-motion-safe"
 
 function Checkbox({ className, ...props }: CheckboxPrimitive.Root.Props) {
+  const transition = useReducedMotionSafe({
+    duration: 0.18,
+    ease: [0.22, 1, 0.36, 1] as const,
+  })
+
   return (
     <CheckboxPrimitive.Root
       data-slot="checkbox"
@@ -16,16 +23,18 @@ function Checkbox({ className, ...props }: CheckboxPrimitive.Root.Props) {
     >
       <CheckboxPrimitive.Indicator
         data-slot="checkbox-indicator"
-        className="flex items-center justify-center text-white transition-none"
+        className="flex items-center justify-center text-white"
       >
-        {/* Checkmark via CSS clip path — white on the blue background set by globals.css */}
         <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden>
-          <path
+          <motion.path
             d="M2 5L4 7L8 3"
             stroke="currentColor"
             strokeWidth="1.8"
             strokeLinecap="round"
             strokeLinejoin="round"
+            initial={{ pathLength: 0 }}
+            animate={{ pathLength: 1 }}
+            transition={transition}
           />
         </svg>
       </CheckboxPrimitive.Indicator>

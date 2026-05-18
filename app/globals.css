@@ -748,12 +748,12 @@ h3 {
 [data-slot="switch"]:focus-visible {
   box-shadow: var(--elev-inset), 0 0 0 3px var(--ring-color);
 }
-/* --- Switch thumb --- */
+/* --- Switch thumb (static; not in parallax SELECTOR) --- */
 [data-slot="switch-thumb"] {
   box-shadow:
     inset 0 1.5px 0 rgb(var(--hi-rgb) / calc(0.9 * var(--hi-scale))),
     inset 0 -1px 0 rgb(var(--lo-rgb) / calc(0.10 * var(--lo-scale))),
-    calc(var(--tilt-x) * -3px) calc(3px + (0.55 - var(--tilt-y)) * 2px) 5px rgb(var(--cast-rgb) / calc(0.28 * var(--cast-scale)));
+    0 4px 5px rgb(var(--cast-rgb) / calc(0.28 * var(--cast-scale)));
 }
 
 /* --- Tabs list (pill track is recessed; line variant is flat) --- */
@@ -771,10 +771,9 @@ h3 {
   border-radius: var(--r-xs);
 }
 
-/* --- Tooltip content --- */
+/* --- Tooltip content (static; not in parallax SELECTOR) --- */
 [data-slot="tooltip-content"] {
-  box-shadow:
-    calc(var(--tilt-x) * -4px) calc(6px + (0.55 - var(--tilt-y)) * 3px) 12px -2px var(--tooltip-cast);
+  box-shadow: 0 8px 12px -2px var(--tooltip-cast);
 }
 
 /* --- Dropdown menu / select popup --- */

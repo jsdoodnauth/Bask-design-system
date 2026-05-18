@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { AnimatePresence, motion } from "framer-motion"
 import { ChevronDownIcon, ChevronsUpDownIcon, ChevronUpIcon } from "lucide-react"
 
 import { cn } from "@/lib/utils"
@@ -13,6 +14,11 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { Checkbox } from "@/components/ui/checkbox"
+import { useReducedMotionSafe } from "@/lib/motion/use-reduced-motion-safe"
+
+// Above this row count, drop FM `layout` on rows to avoid jank on sort/filter
+// (measuring + transforming every row is O(n)). Enter/exit fade still plays.
+const LAYOUT_ANIMATION_ROW_CAP = 50
 
 type SortDirection = "asc" | "desc"
 
@@ -60,6 +66,11 @@ function DataTable<TRow>({
   className,
 }: DataTableProps<TRow>) {
   const [sort, setSort] = React.useState(defaultSort)
+  const animateLayout = data.length <= LAYOUT_ANIMATION_ROW_CAP
+  const rowTransition = useReducedMotionSafe({
+    layout: { type: "spring", stiffness: 380, damping: 38 },
+    opacity: { duration: 0.16, ease: [0.22, 1, 0.36, 1] as const },
+  })
 
   const sorted = React.useMemo(() => {
     if (!sort) return data
@@ -154,32 +165,44 @@ function DataTable<TRow>({
             </TableCell>
           </TableRow>
         ) : (
-          sorted.map((row, rowIndex) => {
-            const id = getRowId(row, rowIndex)
-            const isSelected = selectable && selectedIds?.includes(id)
-            return (
-              <TableRow
-                key={id}
-                data-state={isSelected ? "selected" : undefined}
-                className={cn(isSelected && "bg-surface-2")}
-              >
-                {selectable && (
-                  <TableCell className="w-10">
-                    <Checkbox
-                      aria-label="Select row"
-                      checked={!!isSelected}
-                      onCheckedChange={(checked) => toggleRow(id, checked === true)}
-                    />
-                  </TableCell>
-                )}
-                {columns.map((col) => (
-                  <TableCell key={col.id} className={col.className}>
-                    {col.cell(row, rowIndex)}
-                  </TableCell>
-                ))}
-              </TableRow>
-            )
-          })
+          <AnimatePresence initial={false}>
+            {sorted.map((row, rowIndex) => {
+              const id = getRowId(row, rowIndex)
+              const isSelected = selectable && selectedIds?.includes(id)
+              return (
+                <motion.tr
+                  key={id}
+                  layout={animateLayout}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={rowTransition}
+                  data-slot="table-row"
+                  data-state={isSelected ? "selected" : undefined}
+                  className={cn(
+                    // position:relative is required for FM layout animations to apply transforms to <tr>
+                    "relative border-b border-[color:var(--hairline)] transition-colors hover:bg-surface-2",
+                    isSelected && "bg-surface-2"
+                  )}
+                >
+                  {selectable && (
+                    <TableCell className="w-10">
+                      <Checkbox
+                        aria-label="Select row"
+                        checked={!!isSelected}
+                        onCheckedChange={(checked) => toggleRow(id, checked === true)}
+                      />
+                    </TableCell>
+                  )}
+                  {columns.map((col) => (
+                    <TableCell key={col.id} className={col.className}>
+                      {col.cell(row, rowIndex)}
+                    </TableCell>
+                  ))}
+                </motion.tr>
+              )
+            })}
+          </AnimatePresence>
         )}
       </TableBody>
     </Table>
