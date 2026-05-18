@@ -234,7 +234,7 @@ export default function ComponentsPage() {
         >
           <span style={{ color: "var(--ink-3)", fontWeight: 600, marginRight: 4, alignSelf: "center" }}>Back to:</span>
           <Link
-            href="/"
+            href="/phase1"
             style={{
               padding: "5px 12px", borderRadius: "var(--r-pill)",
               background: "var(--surface-3)", color: "var(--ink)",

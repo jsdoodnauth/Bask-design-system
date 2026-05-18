@@ -10,6 +10,50 @@ A design-system prototype called **Bask**. The full implementation plan lives in
 
 Note: the repo directory is still named `clay-system/` (filesystem rename not done yet) but the design system itself is **Bask**. References to the directory name will be updated when the repo is renamed.
 
+## Don't do this (quick checklist)
+
+- ❌ `box-shadow: var(--elev-2)` on a reactive element — parallax won't repaint. Inline the shadow referencing `var(--tilt-x)` / `var(--tilt-y)` directly.
+- ❌ `translateY` on `:active` for buttons — press feedback is shadow-only.
+- ❌ Pure `#FFFFFF` for any surface tier — the inset highlight vanishes. Cap `--surface-3` near `#FDFDFC`.
+- ❌ `@property --tilt-*` inside `@layer` in `globals.css` — Tailwind v4 silently breaks the registration. Keep top-level.
+- ❌ Unlayered `[data-slot="button"] { --btn-hi: ... }` defaults — utility-class overrides won't win. Put overridable var defaults in `@layer components`.
+- ❌ Asking React state to swap hover shadows — use a CSS `&:hover` rule in a module instead.
+- ❌ Black `rgba(0,0,0,…)` modal backdrops — each theme owns `--modal-backdrop`.
+
+## Token quick reference
+
+Full source in `prototype/tokens.css` / `app/globals.css`. Use these names in components:
+
+| Group | Tokens | When to reach for it |
+| --- | --- | --- |
+| Surface tiers | `--bg`, `--bg-deep`, `--surface`, `--surface-2`, `--surface-3` | Page → card → raised-within-card. Keep luminance gaps between adjacent tiers. |
+| Ink | `--ink`, `--ink-2`, `--ink-3`, `--ink-inv` | Body / secondary / tertiary / on-dark. |
+| Hairline | `--hairline` | 1px dividers, subtle borders. Already theme-aware. |
+| Accents | `--blue`, `--green`, `--amber`, `--red`, `--violet`, `--orange` + matching `*-soft` | Solid for fills/text, soft for badge/tile backgrounds. |
+| Tints | `--tint-blue`, `--tint-green`, … | Icon-tile backgrounds (lighter than `-soft`). |
+| Radii | `--r-xs/sm/md/lg/xl/pill` | 6 / 10 / 14 / 20 / 28 / 999. |
+| Type | `--font-sans`, `--font-display`, `--fs-12…36`, `--tracking-display`, `--lh-display`, `--lh-body` | Display for h1/h2 only. |
+| Shadow primitives | `--hi-rgb`, `--lo-rgb`, `--cast-rgb` + matching `*-scale` | Building blocks for inlined reactive shadows. |
+| Static elevations | `--elev-1`, `--elev-2`, `--elev-3`, `--elev-pressed`, `--elev-inset` | Static elements only (inputs, sidebar, modal, dropdown). |
+| Button insets | `--btn-hi`, `--btn-lo` | Override per colored variant to soften the highlight band. |
+| Motion | `--ease`, `--dur-fast`, `--dur`, `--tilt-x`, `--tilt-y` | Standard easing + 120/220 ms. `--tilt-*` is the parallax channel. |
+| Focus | `--ring`, `--ring-color` | Drop into `box-shadow` for focus state. |
+| Overlay | `--modal-backdrop`, `--tooltip-cast` | Theme-aware, never hardcode. |
+
+## Porting a prototype component to Next.js (recipe)
+
+When porting a component from `prototype/components.css` to `app/`:
+
+1. **Decide reactive or static.** If the prototype's selector matches the parallax `SELECTOR` (`.card, .stat, .btn, .icon-btn, .badge, .lockcard, .user-pill`), it's reactive — shadow must inline `var(--tilt-x)` / `var(--tilt-y)`. Otherwise it can use `var(--elev-*)`.
+2. **Pick a shadow key** from `baskShadow()` (`card`, `card-hover`, `badge`, `avatar`, `swatch`, `btn`, `btn-hover`, `btn-pressed`, `switch-thumb`, `tooltip`). If none fits, add a new key in `lib/bask-shadow.ts` rather than open-coding a shadow string.
+3. **Register tilt** on reactive elements: `const ref = useBaskTilt()` then `<div ref={ref} …>`. Don't add the class-name approach — provider uses the ref set.
+4. **Apply the shadow.** Two routes (both fine, decision 8):
+   - Inline: `style={{ boxShadow: baskShadow('card') }}` plus a CSS-module `&:hover { box-shadow: … }` for the hover swap.
+   - `cva` recipe whose emitted class contains the same shadow string.
+5. **Variant `--btn-hi` / `--btn-lo` overrides** go on the variant utility (e.g. `[--btn-hi:rgba(255,255,255,0.18)]`). The base default for those vars must live in `@layer components` in `globals.css`, otherwise the utility class loses the cascade fight.
+6. **No `:active` translate.** Press state swaps to `btn-pressed` shadow only.
+7. **Verify** by hard-reloading and running the cursor across the element — cast shadow should track. If it doesn't, the shadow is going through `--elev-*` instead of `--tilt-*` directly.
+
 ## Running the prototype
 
 No build step. Open `prototype/index.html` directly in a browser. Hard-reload (Ctrl+F5) after CSS/JS edits.

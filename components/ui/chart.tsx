@@ -41,12 +41,34 @@ function ChartContainer({
       .map(([k, v]) => [`--color-${k}`, v.color])
   ) as React.CSSProperties
 
+  // Measure the wrapper ourselves and pass numeric dimensions to
+  // ResponsiveContainer once we have them. With React 19 + recharts 3,
+  // ResponsiveContainer's own measurement runs before the parent has
+  // resolved its size and logs a width(-1)/height(-1) warning, even
+  // though the chart eventually paints correctly. Mounting the chart
+  // only after we know real dimensions avoids the warning entirely.
+  const ref = React.useRef<HTMLDivElement>(null)
+  const [size, setSize] = React.useState<{ w: number; h: number } | null>(null)
+  React.useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const ro = new ResizeObserver((entries) => {
+      const r = entries[0].contentRect
+      if (r.width > 0 && r.height > 0) {
+        setSize({ w: Math.round(r.width), h: Math.round(r.height) })
+      }
+    })
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [])
+
   return (
     <ChartContext.Provider value={{ config }}>
       <div
+        ref={ref}
         data-slot="chart"
         className={cn(
-          "flex aspect-video w-full justify-center text-[length:var(--fs-13)]",
+          "block w-full h-[260px] text-[length:var(--fs-13)]",
           "[&_.recharts-cartesian-grid_line]:stroke-[var(--hairline)]",
           "[&_.recharts-cartesian-axis-tick_text]:fill-[var(--ink-3)]",
           "[&_.recharts-cartesian-axis_line]:stroke-[var(--hairline)]",
@@ -58,9 +80,11 @@ function ChartContainer({
         style={style}
         {...props}
       >
-        <RechartsPrimitive.ResponsiveContainer aspect={16 / 9} minWidth={0}>
-          {children}
-        </RechartsPrimitive.ResponsiveContainer>
+        {size && (
+          <RechartsPrimitive.ResponsiveContainer width={size.w} height={size.h}>
+            {children}
+          </RechartsPrimitive.ResponsiveContainer>
+        )}
       </div>
     </ChartContext.Provider>
   )

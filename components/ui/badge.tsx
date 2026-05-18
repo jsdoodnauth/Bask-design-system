@@ -22,15 +22,21 @@ const badgeVariants = cva(
   }
 )
 
-type BadgeProps = React.ComponentProps<"span"> & VariantProps<typeof badgeVariants>
+type BadgeProps = React.ComponentProps<"span"> & VariantProps<typeof badgeVariants> & {
+  /** Frosted-transparent variant for use over imagery / color surfaces.
+   *  Combine with a state variant (success/warn/etc.) — the badge keeps the
+   *  frost shell + white text, dot keeps its state color via BadgeDot's className. */
+  glass?: boolean
+}
 
-function Badge({ className, variant = "neutral", ...props }: BadgeProps) {
+function Badge({ className, variant = "neutral", glass = false, ...props }: BadgeProps) {
   const tiltRef = useBaskTilt()
   return (
     <span
       ref={tiltRef}
       data-slot="badge"
       data-variant={variant ?? "neutral"}
+      data-glass={glass ? "" : undefined}
       className={cn(badgeVariants({ variant }), className)}
       {...props}
     />

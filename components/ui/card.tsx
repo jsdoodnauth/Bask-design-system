@@ -8,9 +8,17 @@ import { useBaskTilt } from "@/lib/motion/bask-motion-provider"
 function Card({
   className,
   hoverLift = false,
+  glass = false,
+  glassLight = false,
   ref,
   ...props
-}: React.ComponentProps<"div"> & { hoverLift?: boolean }) {
+}: React.ComponentProps<"div"> & {
+  hoverLift?: boolean
+  /** Frosted-transparent variant for use over imagery / color surfaces. */
+  glass?: boolean
+  /** When combined with `glass`, brightens the frost for pale backdrops. */
+  glassLight?: boolean
+}) {
   const tiltRef = useBaskTilt()
   return (
     <div
@@ -20,8 +28,11 @@ function Card({
         else if (ref) (ref as React.MutableRefObject<HTMLDivElement | null>).current = el
       }}
       data-slot="card"
+      data-glass={glass ? "" : undefined}
+      data-glass-light={glass && glassLight ? "" : undefined}
       className={cn(
-        "bg-surface rounded-lg p-5 text-ink overflow-hidden",
+        "rounded-lg p-5 overflow-hidden",
+        !glass && "bg-surface text-ink",
         hoverLift && "hover-lift",
         className
       )}

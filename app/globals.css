@@ -547,7 +547,12 @@ body::before {
   padding: 56px 32px 96px;
 }
 
-h1, h2, h3 { margin: 0; }
+/* Heading margin reset lives in @layer base so Tailwind `m*` utilities can
+   override per-instance. Font/size declarations stay unlayered — those are
+   design-system defaults that should win over utility classes. */
+@layer base {
+  h1, h2, h3 { margin: 0; }
+}
 h1 {
   font-family: var(--font-display);
   font-size: var(--fs-36);
@@ -647,6 +652,59 @@ h3 {
     calc(var(--tilt-x) * -14px) calc(22px + (0.55 - var(--tilt-y)) * 10px) 34px -10px rgb(var(--cast-rgb) / calc(0.25 * var(--cast-scale)));
 }
 
+/* --- Card glass: frosted-transparent variant for use over imagery / color.
+   Re-scopes --ink tokens so descendants reading var(--ink) (BadgeDescription
+   defaults, etc.) get appropriate contrast for free. Still reactive — cast
+   references var(--tilt-x)/var(--tilt-y) directly per the inline-shadow rule. */
+[data-slot="card"][data-glass] {
+  background: rgba(255,255,255,0.08);
+  -webkit-backdrop-filter: blur(22px) saturate(140%);
+  backdrop-filter: blur(22px) saturate(140%);
+  color: rgba(255,255,255,0.94);
+  --ink:      rgba(255,255,255,0.94);
+  --ink-2:    rgba(255,255,255,0.74);
+  --ink-3:    rgba(255,255,255,0.56);
+  --hairline: rgba(255,255,255,0.12);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.28),
+    inset 0 0 0 1px rgba(255,255,255,0.10),
+    inset 0 -1px 0 rgba(0,0,0,0.22),
+    calc(var(--tilt-x) * -10px) calc(18px + (0.55 - var(--tilt-y)) * 8px) 30px -10px rgba(0,0,0,0.45);
+  transition:
+    box-shadow var(--dur) var(--ease),
+    background var(--dur) var(--ease),
+    backdrop-filter var(--dur) var(--ease);
+}
+[data-slot="card"][data-glass].hover-lift:hover {
+  background: rgba(255,255,255,0.11);
+  box-shadow:
+    inset 0 1.5px 0 rgba(255,255,255,0.34),
+    inset 0 0 0 1px rgba(255,255,255,0.12),
+    inset 0 -1px 0 rgba(0,0,0,0.26),
+    calc(var(--tilt-x) * -16px) calc(28px + (0.55 - var(--tilt-y)) * 12px) 48px -12px rgba(0,0,0,0.55);
+}
+/* Light-tinted glass — for use over light imagery / pale backgrounds. */
+[data-slot="card"][data-glass][data-glass-light] {
+  background: rgba(255,255,255,0.55);
+  color: #1a1a1a;
+  --ink:   #1a1a1a;
+  --ink-2: #444;
+  --ink-3: #666;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.70),
+    inset 0 0 0 1px rgba(255,255,255,0.45),
+    inset 0 -1px 0 rgba(0,0,0,0.06),
+    calc(var(--tilt-x) * -10px) calc(18px + (0.55 - var(--tilt-y)) * 8px) 30px -10px rgba(0,0,0,0.18);
+}
+[data-slot="card"][data-glass][data-glass-light].hover-lift:hover {
+  background: rgba(255,255,255,0.68);
+  box-shadow:
+    inset 0 1.5px 0 rgba(255,255,255,0.85),
+    inset 0 0 0 1px rgba(255,255,255,0.55),
+    inset 0 -1px 0 rgba(0,0,0,0.08),
+    calc(var(--tilt-x) * -16px) calc(28px + (0.55 - var(--tilt-y)) * 12px) 48px -12px rgba(0,0,0,0.22);
+}
+
 /* --- Badge ---
    Same cascade trick as buttons (see CLAUDE.md): per-variant utilities
    override --badge-hi/--badge-lo defaults from @layer components, and the
@@ -664,6 +722,23 @@ h3 {
     inset 0 -1.5px 0 var(--badge-lo),
     calc(var(--tilt-x) * -4px) calc(8px + (0.55 - var(--tilt-y)) * 4px) 14px -6px rgb(var(--cast-rgb) / calc(0.18 * var(--cast-scale)));
   transition: box-shadow var(--dur) var(--ease);
+}
+
+/* --- Badge glass: frosted shell that mirrors .card.is-glass at badge scale.
+   Combines with any state variant — this rule overrides bg/color/shadow but
+   NOT the dot (BadgeDot's className still controls dot color, so state remains
+   readable via the dot). Two attribute selectors beat the single-class utility
+   for bg-green-soft etc., so no !important needed. */
+[data-slot="badge"][data-glass] {
+  background: rgba(255,255,255,0.14);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  backdrop-filter: blur(14px) saturate(140%);
+  color: rgba(255,255,255,0.95);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.28),
+    inset 0 0 0 1px rgba(255,255,255,0.12),
+    inset 0 -1px 0 rgba(0,0,0,0.18),
+    calc(var(--tilt-x) * -4px) calc(8px + (0.55 - var(--tilt-y)) * 4px) 14px -6px rgba(0,0,0,0.35);
 }
 
 /* --- Avatar --- */
@@ -856,9 +931,42 @@ h3 {
   outline: none;
   box-shadow: 0 0 0 3px var(--ring-color);
 }
+[data-slot="nav-item"][data-active] {
+  box-shadow: var(--elev-1);
+}
 [data-slot="nav-item"][data-active]:focus-visible {
   outline: none;
   box-shadow: var(--elev-1), 0 0 0 3px var(--ring-color);
+}
+
+/* --- Sidebar shell (static elevation; not in parallax SELECTOR) --- */
+[data-slot="sidebar"] { box-shadow: var(--elev-2); }
+
+/* --- Activity timeline: hairline between consecutive items --- */
+[data-slot="activity-item"] + [data-slot="activity-item"] {
+  border-top: 1px solid var(--hairline);
+}
+[data-slot="activity-item"] code {
+  background: var(--surface-2);
+  padding: 1px 6px;
+  border-radius: var(--r-xs);
+  font-size: 12px;
+}
+
+/* --- Field row: hairline between consecutive rows --- */
+[data-slot="field-row"] + [data-slot="field-row"] {
+  border-top: 1px solid var(--hairline);
+}
+
+/* --- User pill (reactive on hover — same signature as badge) --- */
+[data-slot="user-pill"]:hover {
+  box-shadow:
+    inset 0 1.5px 0 rgb(var(--hi-rgb) / calc(0.7 * var(--hi-scale))),
+    inset 0 -1.5px 0 rgb(var(--lo-rgb) / calc(0.03 * var(--lo-scale))),
+    calc(var(--tilt-x) * -4px) calc(8px + (0.55 - var(--tilt-y)) * 4px) 14px -6px rgb(var(--cast-rgb) / calc(0.18 * var(--cast-scale)));
+}
+[data-slot="user-pill"]:focus-visible {
+  box-shadow: 0 0 0 3px var(--ring-color);
 }
 
 /* --- Swatch focus ring --- */

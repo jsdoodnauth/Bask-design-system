@@ -37,6 +37,16 @@ import { LockCard } from "@/components/ui/lock-card";
 import { AvatarInitials } from "@/components/ui/avatar-initials";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { Choice } from "@/components/ui/choice";
+import {
+  Sidebar, SidebarBrand, SidebarSection, SidebarSectionLabel,
+  NavItem, SidebarFooter, UserPill,
+} from "@/components/ui/sidebar";
+import {
+  AppShell, AppMain, PageHeader, PageHeaderTitle, PageHeaderMeta, PageHeaderActions,
+} from "@/components/ui/app-shell";
+import { Activity, ActivityItem } from "@/components/ui/activity";
+import { FieldRow } from "@/components/ui/field-row";
+import { Home as HomeIcon, Globe, BarChart3, Database, CreditCard, GitPullRequest, KeyRound, Shield } from "lucide-react";
 
 const Section = ({ title, children }: { title: string; children: React.ReactNode }) => (
   <section className="section">
@@ -81,11 +91,11 @@ export default function Home() {
       }}>
         <span style={{ color: "var(--ink-3)", fontWeight: 600, marginRight: 4, alignSelf: "center" }}>Sample pages:</span>
         {[
-          { href: "/dashboard", label: "Dashboard" },
-          { href: "/customers", label: "Customers" },
-          { href: "/article",   label: "Article"   },
-          { href: "/product",   label: "Product"   },
-          { href: "/components", label: "Components" },
+          { href: "/phase1/dashboard", label: "Dashboard" },
+          { href: "/phase1/customers", label: "Customers" },
+          { href: "/phase1/article",   label: "Article"   },
+          { href: "/phase1/product",   label: "Product"   },
+          { href: "/phase1/components", label: "Components" },
         ].map(({ href, label }) => (
           <Link
             key={href}
@@ -298,6 +308,77 @@ export default function Home() {
         </Row>
       </Section>
 
+      {/* ── Glass ── */}
+      <Section title="Glass">
+        <p style={{ color: "var(--ink-3)", fontSize: "var(--fs-13)", margin: "-8px 0 16px" }}>
+          Frosted-transparent variants of <code>Card</code>, <code>Button</code>, and <code>Badge</code> for use over imagery or color.
+        </p>
+        <div
+          style={{
+            position: "relative",
+            borderRadius: "var(--r-xl)",
+            padding: 28,
+            overflow: "hidden",
+            background: `
+              radial-gradient(120% 80% at 20% 20%, #4a6fa8 0%, transparent 60%),
+              radial-gradient(100% 70% at 90% 30%, #d6915a 0%, transparent 55%),
+              linear-gradient(160deg, #1b2740 0%, #0e1422 70%)
+            `,
+            minHeight: 320,
+          }}
+        >
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
+            <Card glass hoverLift>
+              <div className="eyebrow" style={{ color: "rgba(255,255,255,0.7)" }}>Trail · Featured</div>
+              <h3 style={{ margin: "8px 0 12px", fontSize: "var(--fs-22)", lineHeight: 1.2 }}>Eagle Ridge Loop</h3>
+              <Row style={{ gap: 18, marginBottom: 14 }}>
+                <div>
+                  <div className="eyebrow" style={{ color: "rgba(255,255,255,0.55)" }}>Elevation</div>
+                  <div style={{ fontWeight: 700 }}>1,000 ft</div>
+                </div>
+                <div>
+                  <div className="eyebrow" style={{ color: "rgba(255,255,255,0.55)" }}>Distance</div>
+                  <div style={{ fontWeight: 700 }}>7.4 mi</div>
+                </div>
+                <div>
+                  <div className="eyebrow" style={{ color: "rgba(255,255,255,0.55)" }}>Time</div>
+                  <div style={{ fontWeight: 700 }}>3h 15m</div>
+                </div>
+              </Row>
+              <p style={{ fontSize: "var(--fs-13)", color: "rgba(255,255,255,0.75)", margin: "0 0 16px" }}>
+                A scenic 7.4-mile loop featuring sweeping ridge-top views, vibrant wildflowers, and frequent wildlife sightings.
+              </p>
+              <Row style={{ gap: 10 }}>
+                <Button variant="primary">Book a tour</Button>
+                <Button variant="glass">Preview trail</Button>
+              </Row>
+            </Card>
+
+            <Card glass glassLight hoverLift>
+              <div className="eyebrow">Light glass</div>
+              <h3 style={{ margin: "8px 0 12px", fontSize: "var(--fs-22)", lineHeight: 1.2 }}>For pale backdrops</h3>
+              <p style={{ fontSize: "var(--fs-13)", color: "var(--ink-2)", margin: "0 0 16px" }}>
+                Same recipe, brighter tint. Use when the surface behind the card is light imagery or a soft gradient.
+              </p>
+              <Row style={{ gap: 10 }}>
+                <Button variant="default">Cancel</Button>
+                <Button variant="primary">Continue</Button>
+              </Row>
+            </Card>
+          </div>
+
+          <Row style={{ gap: 12, marginTop: 20 }}>
+            <span style={{ fontSize: "var(--fs-13)", color: "rgba(255,255,255,0.7)", marginRight: 4 }}>Standalone:</span>
+            <Button variant="glass">Preview</Button>
+            <Button variant="primary">Book a tour</Button>
+            <Badge variant="success" glass><BadgeDot className="bg-green" />Live</Badge>
+            <Badge variant="warn" glass><BadgeDot className="bg-amber" />Trial</Badge>
+            <Badge variant="info" glass><BadgeDot className="bg-blue" />Beta</Badge>
+            <Badge variant="violet" glass><BadgeDot className="bg-violet" />Gold</Badge>
+          </Row>
+        </div>
+      </Section>
+
       {/* ── Avatars ── */}
       <Section title="Avatars">
         <Row>
@@ -501,6 +582,130 @@ export default function Home() {
             </DialogContent>
           </Dialog>
         </Row>
+      </Section>
+
+      {/* ── App shell ── */}
+      <Section title="App shell">
+        <p style={{ color: "var(--ink-3)", fontSize: "var(--fs-13)", margin: "-8px 0 16px" }}>
+          Sidebar + main layout with brand, nav items, footer user-pill, breadcrumbs, and page header.
+        </p>
+        <AppShell>
+          <Sidebar>
+            <SidebarBrand>Bask</SidebarBrand>
+            <SidebarSection>
+              <SidebarSectionLabel>Workspace</SidebarSectionLabel>
+              <NavItem active icon={<HomeIcon size={14} />}>Dashboard</NavItem>
+              <NavItem icon={<Globe size={14} />} count={4}>Sites</NavItem>
+              <NavItem icon={<Users size={14} />} count={248}>Customers</NavItem>
+              <NavItem icon={<BarChart3 size={14} />}>Analytics</NavItem>
+              <NavItem icon={<Database size={14} />}>Backups</NavItem>
+            </SidebarSection>
+            <SidebarSection>
+              <SidebarSectionLabel>Account</SidebarSectionLabel>
+              <NavItem icon={<Settings size={14} />}>Settings</NavItem>
+              <NavItem icon={<CreditCard size={14} />}>Billing</NavItem>
+            </SidebarSection>
+            <SidebarFooter>
+              <UserPill name="Joshua D." role="Owner · Free plan" initials="JD" color="violet">
+                <DropdownMenuItem>Account settings</DropdownMenuItem>
+                <DropdownMenuItem>Switch workspace</DropdownMenuItem>
+                <DropdownMenuItem>Upgrade plan</DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem variant="destructive">Sign out</DropdownMenuItem>
+              </UserPill>
+            </SidebarFooter>
+          </Sidebar>
+
+          <AppMain>
+            <Breadcrumbs items={[
+              { label: "Home", href: "#" },
+              { label: "Sites", href: "#" },
+              { label: "bloom-studio.com" },
+            ]} />
+
+            <PageHeader>
+              <div>
+                <PageHeaderTitle>bloom-studio.com</PageHeaderTitle>
+                <PageHeaderMeta>
+                  <Badge variant="success"><BadgeDot className="bg-green" />Live</Badge>
+                  Last deploy 2 hours ago
+                </PageHeaderMeta>
+              </div>
+              <PageHeaderActions>
+                <Button variant="default">Pause</Button>
+                <Button variant="primary">Deploy</Button>
+              </PageHeaderActions>
+            </PageHeader>
+
+            <Card>
+              <Tabs defaultValue="overview">
+                <TabsList>
+                  <TabsTrigger value="overview">Overview</TabsTrigger>
+                  <TabsTrigger value="activity">Activity</TabsTrigger>
+                  <TabsTrigger value="settings">Settings</TabsTrigger>
+                </TabsList>
+
+                <TabsContent value="overview">
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 12, marginTop: 18 }}>
+                    <Stat label="Uptime · 30d" value="99.98%" icon={<BarChart3 size={16} />} tint="green" />
+                    <Stat label="Requests · 24h" value="14.2k" icon={<Globe size={16} />} tint="blue" />
+                    <Stat label="Avg latency" value="142ms" icon={<Database size={16} />} tint="amber" />
+                  </div>
+                </TabsContent>
+
+                <TabsContent value="activity">
+                  <Activity>
+                    <ActivityItem
+                      avatar={<Avatar size="sm" color="green">EM</Avatar>}
+                      time="2 hours ago"
+                    >
+                      <strong>Elena Marquez</strong> deployed <code>v2.4.1</code> to production
+                    </ActivityItem>
+                    <ActivityItem
+                      avatar={<Avatar size="sm" color="violet">SM</Avatar>}
+                      time="Yesterday at 4:32 PM"
+                    >
+                      <strong>Sarah Miller</strong> opened pull request <code>#412</code>
+                    </ActivityItem>
+                    <ActivityItem
+                      avatar={<Avatar size="sm" color="brown">DT</Avatar>}
+                      time="2 days ago"
+                    >
+                      <strong>Daniel Torres</strong> rotated the API key
+                    </ActivityItem>
+                    <ActivityItem
+                      avatar={<Avatar size="sm" color="amber">AT</Avatar>}
+                      time="3 days ago"
+                    >
+                      <strong>Alex Taylor</strong> resolved 3 vulnerability alerts
+                    </ActivityItem>
+                  </Activity>
+                </TabsContent>
+
+                <TabsContent value="settings">
+                  <FieldRow
+                    label="Auto-deploy on push"
+                    hint={<>Trigger production builds from <code>main</code>.</>}
+                  >
+                    <Switch defaultChecked />
+                  </FieldRow>
+                  <FieldRow
+                    label="Vulnerability scanning"
+                    hint="Scan dependencies on every push and alert maintainers."
+                  >
+                    <Switch defaultChecked />
+                  </FieldRow>
+                  <FieldRow
+                    label="Public status page"
+                    hint="Expose uptime and incident history at status.bloom-studio.com."
+                  >
+                    <Switch />
+                  </FieldRow>
+                </TabsContent>
+              </Tabs>
+            </Card>
+          </AppMain>
+        </AppShell>
       </Section>
     </main>
   );

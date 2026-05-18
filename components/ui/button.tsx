@@ -18,6 +18,7 @@ const buttonVariants = cva(
         danger:  "[--btn-hi:rgba(255,255,255,0.18)] [--btn-lo:rgba(0,0,0,0.18)] bg-red text-white",
         orange:  "[--btn-hi:rgba(255,255,255,0.22)] [--btn-lo:rgba(0,0,0,0.16)] bg-orange text-white",
         ghost:   "[--btn-hi:rgba(0,0,0,0)] [--btn-lo:rgba(0,0,0,0)] bg-transparent text-ink-2 hover:bg-surface-2",
+        glass:   "[--btn-hi:rgba(255,255,255,0.28)] [--btn-lo:rgba(0,0,0,0.22)] bg-white/15 text-white/95 hover:bg-white/25",
       },
       size: {
         default: "px-[18px] py-[11px] rounded-md",
