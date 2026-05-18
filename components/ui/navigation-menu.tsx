@@ -1,3 +1,8 @@
+"use client"
+
+import * as React from "react"
+import { LayoutGroup, motion } from "framer-motion"
+
 import { cn } from "@/lib/utils"
 
 /**
@@ -6,6 +11,8 @@ import { cn } from "@/lib/utils"
  * match Bask's sidebar-nav pattern. These components implement the sidebar
  * nav items directly, matching the .nav-item / .nav-item.is-active prototype styles.
  */
+
+const SidebarLayoutContext = React.createContext<string | null>(null)
 
 function NavShell({ className, ...props }: React.ComponentProps<"div">) {
   return (
@@ -17,17 +24,24 @@ function NavShell({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
-function Sidebar({ className, ...props }: React.ComponentProps<"nav">) {
+function Sidebar({ className, children, ...props }: React.ComponentProps<"nav">) {
+  const layoutId = React.useId()
   return (
-    <nav
-      data-slot="sidebar"
-      className={cn(
-        "flex flex-col gap-1 p-3 rounded-lg bg-surface sticky top-6",
-        "[box-shadow:var(--elev-2)]",
-        className
-      )}
-      {...props}
-    />
+    <SidebarLayoutContext.Provider value={layoutId}>
+      <LayoutGroup id={layoutId}>
+        <nav
+          data-slot="sidebar"
+          className={cn(
+            "flex flex-col gap-1 p-3 rounded-lg bg-surface sticky top-6",
+            "[box-shadow:var(--elev-2)]",
+            className
+          )}
+          {...props}
+        >
+          {children}
+        </nav>
+      </LayoutGroup>
+    </SidebarLayoutContext.Provider>
   )
 }
 
@@ -70,24 +84,38 @@ function SidebarSectionLabel({ className, ...props }: React.ComponentProps<"div"
 function NavItem({
   className,
   active = false,
+  children,
   ...props
 }: React.ComponentProps<"a"> & { active?: boolean }) {
+  const inLayoutGroup = React.useContext(SidebarLayoutContext) !== null
   return (
     <a
       data-slot="nav-item"
       data-active={active || undefined}
       className={cn(
-        "flex items-center gap-2.5 px-3 py-[9px] rounded-sm",
+        "relative flex items-center gap-2.5 px-3 py-[9px] rounded-sm",
         "text-[length:var(--fs-14)] font-medium text-ink-2 no-underline cursor-pointer",
-        "transition-[background,color,box-shadow] duration-[var(--dur-fast)]",
-        "hover:bg-surface-2 hover:text-ink",
-        active
-          ? "bg-surface-3 text-ink font-semibold [box-shadow:var(--elev-1)]"
-          : "",
+        "transition-[color] duration-[var(--dur-fast)]",
+        "hover:text-ink",
+        // Hover background only shows on inactive items so it doesn't fight the sliding pill.
+        !active && "hover:bg-surface-2",
+        active && "text-ink font-semibold",
         className
       )}
       {...props}
-    />
+    >
+      {active && inLayoutGroup && (
+        <motion.span
+          layoutId="sidebar-active-pill"
+          aria-hidden
+          className="absolute inset-0 rounded-sm bg-surface-3 [box-shadow:var(--elev-1)]"
+          transition={{ type: "spring", stiffness: 380, damping: 35 }}
+        />
+      )}
+      <span className="relative z-10 inline-flex items-center gap-2.5 w-full">
+        {children}
+      </span>
+    </a>
   )
 }
 

@@ -5,13 +5,16 @@ import { Menu as MenuPrimitive } from "@base-ui/react/menu"
 
 import { cn } from "@/lib/utils"
 import { ChevronRightIcon, CheckIcon } from "lucide-react"
+import { tweenFast } from "@/lib/motion/presets"
+import { useReducedMotionSafe } from "@/lib/motion/use-reduced-motion-safe"
+import { popupRender } from "@/lib/motion/overlay"
 
 function DropdownMenu({ ...props }: MenuPrimitive.Root.Props) {
   return <MenuPrimitive.Root data-slot="dropdown-menu" {...props} />
 }
 
 function DropdownMenuPortal({ ...props }: MenuPrimitive.Portal.Props) {
-  return <MenuPrimitive.Portal data-slot="dropdown-menu-portal" {...props} />
+  return <MenuPrimitive.Portal data-slot="dropdown-menu-portal" keepMounted {...props} />
 }
 
 function DropdownMenuTrigger({ ...props }: MenuPrimitive.Trigger.Props) {
@@ -27,8 +30,9 @@ function DropdownMenuContent({
   ...props
 }: MenuPrimitive.Popup.Props &
   Pick<MenuPrimitive.Positioner.Props, "align" | "alignOffset" | "side" | "sideOffset">) {
+  const transition = useReducedMotionSafe(tweenFast)
   return (
-    <MenuPrimitive.Portal>
+    <MenuPrimitive.Portal keepMounted>
       <MenuPrimitive.Positioner
         className="isolate z-50 outline-none"
         align={align}
@@ -41,10 +45,9 @@ function DropdownMenuContent({
           className={cn(
             "z-50 min-w-[200px] bg-surface rounded-md p-1.5 text-ink overflow-hidden",
             "origin-[var(--transform-origin)]",
-            "data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95",
-            "data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
             className
           )}
+          render={popupRender(transition, { closedScale: 0.95 })}
           {...props}
         />
       </MenuPrimitive.Positioner>

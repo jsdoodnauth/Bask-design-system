@@ -6,6 +6,9 @@ import { Dialog as DialogPrimitive } from "@base-ui/react/dialog"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { XIcon } from "lucide-react"
+import { springSoft, tweenBase } from "@/lib/motion/presets"
+import { useReducedMotionSafe } from "@/lib/motion/use-reduced-motion-safe"
+import { backdropRender, popupRender } from "@/lib/motion/overlay"
 
 function Dialog({ ...props }: DialogPrimitive.Root.Props) {
   return <DialogPrimitive.Root data-slot="dialog" {...props} />
@@ -16,7 +19,7 @@ function DialogTrigger({ ...props }: DialogPrimitive.Trigger.Props) {
 }
 
 function DialogPortal({ ...props }: DialogPrimitive.Portal.Props) {
-  return <DialogPrimitive.Portal data-slot="dialog-portal" {...props} />
+  return <DialogPrimitive.Portal data-slot="dialog-portal" keepMounted {...props} />
 }
 
 function DialogClose({ ...props }: DialogPrimitive.Close.Props) {
@@ -24,15 +27,12 @@ function DialogClose({ ...props }: DialogPrimitive.Close.Props) {
 }
 
 function DialogOverlay({ className, ...props }: DialogPrimitive.Backdrop.Props) {
+  const transition = useReducedMotionSafe(tweenBase)
   return (
     <DialogPrimitive.Backdrop
       data-slot="dialog-overlay"
-      className={cn(
-        "fixed inset-0 isolate z-50",
-        "data-open:animate-in data-open:fade-in-0",
-        "data-closed:animate-out data-closed:fade-out-0",
-        className
-      )}
+      className={cn("fixed inset-0 isolate z-50", className)}
+      render={backdropRender(transition)}
       {...props}
     />
   )
@@ -44,6 +44,7 @@ function DialogContent({
   showCloseButton = true,
   ...props
 }: DialogPrimitive.Popup.Props & { showCloseButton?: boolean }) {
+  const transition = useReducedMotionSafe(springSoft)
   return (
     <DialogPortal>
       <DialogOverlay />
@@ -53,10 +54,9 @@ function DialogContent({
           "fixed top-1/2 left-1/2 z-50 w-full max-w-[min(440px,calc(100%-2rem))]",
           "-translate-x-1/2 -translate-y-1/2",
           "bg-surface rounded-xl p-7 text-ink outline-none",
-          "data-open:animate-in data-open:fade-in-0 data-open:zoom-in-[0.96] data-open:[animation-duration:240ms]",
-          "data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-[0.96] data-closed:[animation-duration:200ms]",
           className
         )}
+        render={popupRender(transition, { closedScale: 0.96 })}
         {...props}
       >
         {children}

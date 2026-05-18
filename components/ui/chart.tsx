@@ -58,7 +58,7 @@ function ChartContainer({
         style={style}
         {...props}
       >
-        <RechartsPrimitive.ResponsiveContainer>
+        <RechartsPrimitive.ResponsiveContainer aspect={16 / 9} minWidth={0}>
           {children}
         </RechartsPrimitive.ResponsiveContainer>
       </div>

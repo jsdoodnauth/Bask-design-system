@@ -3,6 +3,9 @@
 import { Popover as PopoverPrimitive } from "@base-ui/react/popover"
 
 import { cn } from "@/lib/utils"
+import { tweenBase } from "@/lib/motion/presets"
+import { useReducedMotionSafe } from "@/lib/motion/use-reduced-motion-safe"
+import { popupRender } from "@/lib/motion/overlay"
 
 function Popover({ ...props }: PopoverPrimitive.Root.Props) {
   return <PopoverPrimitive.Root data-slot="popover" {...props} />
@@ -32,8 +35,10 @@ function PopoverContent({
   children,
   ...props
 }: PopoverContentProps) {
+  // 180ms fade + 4px lift, no spring (popovers feel sluggish with springs).
+  const transition = useReducedMotionSafe({ ...tweenBase, duration: 0.18 })
   return (
-    <PopoverPrimitive.Portal>
+    <PopoverPrimitive.Portal keepMounted>
       <PopoverPrimitive.Positioner
         side={side}
         align={align}
@@ -44,10 +49,9 @@ function PopoverContent({
           data-slot="popover-content"
           className={cn(
             "z-50 min-w-[8rem] rounded-[var(--r-md)] bg-surface text-ink p-4 outline-none",
-            "data-open:animate-in data-open:fade-in-0 data-open:zoom-in-[0.96] data-open:[animation-duration:160ms]",
-            "data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-[0.96] data-closed:[animation-duration:120ms]",
             className
           )}
+          render={popupRender(transition, { closedScale: 1, closedY: 4 })}
           {...props}
         >
           {children}
