@@ -63,14 +63,59 @@ function AvatarFallback({ className, ...props }: AvatarPrimitive.Fallback.Props)
   )
 }
 
-function AvatarGroup({ className, ...props }: React.ComponentProps<"div">) {
+interface AvatarGroupProps extends React.ComponentProps<"div"> {
+  /** Pixel overlap; default 8 (matches `-space-x-2`). */
+  overlap?: number
+  /** Maximum avatars shown before `+N` chip. */
+  max?: number
+  /** Ring color class for stacked avatars. */
+  ringClass?: string
+}
+
+function AvatarGroup({
+  className,
+  children,
+  overlap = 8,
+  max,
+  ringClass = "ring-2 ring-[color:var(--surface)]",
+  ...props
+}: AvatarGroupProps) {
+  const arr = React.Children.toArray(children)
+  const shown = max !== undefined && arr.length > max ? arr.slice(0, max) : arr
+  const overflow = max !== undefined && arr.length > max ? arr.length - max : 0
+  const styled = shown.map((child, i) => {
+    if (!React.isValidElement<{ className?: string }>(child)) return child
+    return React.cloneElement(child, {
+      key: child.key ?? i,
+      className: cn(ringClass, child.props.className),
+    })
+  })
   return (
     <div
       data-slot="avatar-group"
-      className={cn("flex -space-x-2", className)}
+      className={cn("flex items-center", className)}
       {...props}
-    />
+    >
+      {styled.map((c, i) => (
+        <div key={i} style={i === 0 ? undefined : { marginLeft: -overlap }}>
+          {c}
+        </div>
+      ))}
+      {overflow > 0 ? (
+        <div
+          aria-label={`${overflow} more`}
+          className={cn(
+            "size-6 rounded-full grid place-items-center bg-surface-3 text-ink-2 text-[length:var(--fs-12)] font-bold [box-shadow:var(--elev-1)]",
+            ringClass
+          )}
+          style={{ marginLeft: -overlap }}
+        >
+          +{overflow}
+        </div>
+      ) : null}
+    </div>
   )
 }
 
 export { Avatar, AvatarImage, AvatarFallback, AvatarGroup }
+export type { AvatarGroupProps }
