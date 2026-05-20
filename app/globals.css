@@ -1,6 +1,7 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
+@import "jsvectormap/dist/jsvectormap.min.css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -1038,4 +1039,24 @@ h3 {
     outline: 1px solid var(--hairline);
     outline-offset: -1px;
   }
+}
+
+/* ============================================================
+   jsvectormap theme overrides — see components/ui/world-map.tsx
+   The tooltip is appended to <body>, so vars must live on :root.
+   ============================================================ */
+:root {
+  --jvm-tooltip-bg-color: var(--ink);
+  --jvm-tooltip-color: var(--ink-inv);
+  --jvm-tooltip-radius: var(--r-sm);
+  --jvm-tooltip-font-size: var(--fs-12);
+  --jvm-tooltip-padding: 6px 8px;
+  --jvm-tooltip-shadow: var(--tooltip-cast);
+  --jvm-border-color: var(--hairline);
+  --jvm-legend-bg-color: var(--surface);
+  --jvm-legend-radius: var(--r-sm);
+}
+.jvm-tooltip {
+  font-weight: 500;
+  letter-spacing: 0;
 }

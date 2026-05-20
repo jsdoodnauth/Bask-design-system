@@ -363,10 +363,10 @@ export default function EcommerceDashboardPage() {
             <WorldMap
               height={300}
               hotspots={[
-                { lng: -98,  lat: 39,  tint: "blue",   r: 1.6, label: "United States" },
-                { lng:  -3,  lat: 54,  tint: "red",    r: 1.4, label: "United Kingdom" },
-                { lng: 134,  lat: -25, tint: "green",  r: 1.4, label: "Australia" },
-                { lng:  10,  lat: 51,  tint: "amber",  r: 1.3, label: "Germany" },
+                { lng: -98,  lat: 39,  tint: "blue",   label: "United States" },
+                { lng:  -3,  lat: 54,  tint: "red",    label: "United Kingdom" },
+                { lng: 134,  lat: -25, tint: "green",  label: "Australia" },
+                { lng:  10,  lat: 51,  tint: "amber",  label: "Germany" },
               ]}
             />
             <SourceList rows={locations} />

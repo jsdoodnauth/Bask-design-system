@@ -353,7 +353,7 @@ export default function AnalyticsDashboardPage() {
             <WorldMap
               height={180}
               hotspots={geoCountries.map((c) => ({
-                lng: c.lng, lat: c.lat, tint: c.tint, label: c.name, r: 1.4,
+                lng: c.lng, lat: c.lat, tint: c.tint, label: c.name,
               }))}
             />
             <div className="grid grid-cols-2 gap-3 mt-3 pt-3 border-t border-[color:var(--hairline)]">
