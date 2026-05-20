@@ -5,6 +5,7 @@ import { ArrowUpRight, ArrowDownRight } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
+import { BrandIcon, type BrandSlug } from "@/components/ui/brand-icon"
 import type { StatTint } from "@/components/ui/stat"
 
 const TINT_BG: Record<StatTint, string> = {
@@ -31,9 +32,12 @@ export interface SourceRow {
   /** Delta string, e.g. "+8.4%". Drives the badge. */
   delta?: string
   deltaUp?: boolean
-  /** Icon / brand glyph rendered in the tinted tile on the left. */
+  /** Brand slug — renders an `@icons-pack/react-simple-icons` glyph in brand color
+   *  inside a neutral tile. Takes precedence over `icon` / `initials`. */
+  brand?: BrandSlug
+  /** Custom icon node rendered in the tinted tile on the left. */
   icon?: React.ReactNode
-  /** Initials shown if no icon is given. */
+  /** Initials shown if no icon / brand is given. */
   initials?: string
   tint?: StatTint
 }
@@ -61,11 +65,12 @@ function SourceList({ rows, className, ...props }: SourceListProps) {
                 className={cn(
                   "size-8 rounded-sm grid place-items-center flex-none font-bold text-[length:var(--fs-12)]",
                   "[box-shadow:var(--elev-1)]",
-                  TINT_BG[tint],
-                  TINT_INK[tint],
+                  row.brand ? "bg-surface-3 text-ink" : cn(TINT_BG[tint], TINT_INK[tint]),
                 )}
               >
-                {row.icon ?? row.initials ?? row.label.charAt(0)}
+                {row.brand
+                  ? <BrandIcon slug={row.brand} size={16} />
+                  : (row.icon ?? row.initials ?? row.label.charAt(0))}
               </div>
               <span className="text-[length:var(--fs-14)] font-medium text-ink truncate">
                 {row.label}

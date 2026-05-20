@@ -25,6 +25,8 @@ import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/
 import {
   Table, TableHeader, TableBody, TableRow, TableHead, TableCell,
 } from "@/components/ui/table"
+import { RowActionMenu } from "@/components/ui/row-action-menu"
+import { DropdownMenuItem, DropdownMenuSeparator } from "@/components/ui/dropdown-menu"
 import {
   Progress, ProgressTrack, ProgressIndicator,
 } from "@/components/ui/progress"
@@ -61,25 +63,25 @@ const geoCountries = [
 ] as const
 
 const trafficSources = [
-  { label: "Google",     value: "87.8k", delta: "+12.4%", deltaUp: true,  initials: "G",  tint: "blue"   as const },
-  { label: "Instagram",  value: "42.9k", delta: "+8.1%",  deltaUp: true,  initials: "IG", tint: "red"    as const },
-  { label: "LinkedIn",   value: "58.5k", delta: "+3.6%",  deltaUp: true,  initials: "in", tint: "blue"   as const },
-  { label: "Dribbble",   value: "2.85k", delta: "+0.9%",  deltaUp: true,  initials: "Dr", tint: "violet" as const },
-  { label: "Messenger",  value: "9.08k", delta: "+2.0%",  deltaUp: true,  initials: "M",  tint: "blue"   as const },
-  { label: "Meta",       value: "77.7k", delta: "+6.1%",  deltaUp: true,  initials: "Me", tint: "blue"   as const },
-  { label: "Telegram",   value: "31.5k", delta: "+4.2%",  deltaUp: true,  initials: "Tg", tint: "blue"   as const },
-  { label: "Twitter X",  value: "22.6k", delta: "-1.2%",  deltaUp: false, initials: "X",  tint: "violet" as const },
-  { label: "WhatsApp",   value: "3.1k",  delta: "+5.3%",  deltaUp: true,  initials: "Wa", tint: "green"  as const },
-  { label: "Snapchat",   value: "5.8k",  delta: "-0.4%",  deltaUp: false, initials: "Sn", tint: "amber"  as const },
+  { label: "Google",     value: "87.8k", delta: "+12.4%", deltaUp: true,  brand: "google"    as const },
+  { label: "Instagram",  value: "42.9k", delta: "+8.1%",  deltaUp: true,  brand: "instagram" as const },
+  { label: "LinkedIn",   value: "58.5k", delta: "+3.6%",  deltaUp: true,  initials: "in",   tint: "blue"   as const },
+  { label: "Dribbble",   value: "2.85k", delta: "+0.9%",  deltaUp: true,  brand: "dribbble"  as const },
+  { label: "Messenger",  value: "9.08k", delta: "+2.0%",  deltaUp: true,  brand: "messenger" as const },
+  { label: "Meta",       value: "77.7k", delta: "+6.1%",  deltaUp: true,  brand: "meta"      as const },
+  { label: "Telegram",   value: "31.5k", delta: "+4.2%",  deltaUp: true,  brand: "telegram"  as const },
+  { label: "Twitter X",  value: "22.6k", delta: "-1.2%",  deltaUp: false, brand: "x"         as const },
+  { label: "WhatsApp",   value: "3.1k",  delta: "+5.3%",  deltaUp: true,  brand: "whatsapp"  as const },
+  { label: "Snapchat",   value: "5.8k",  delta: "-0.4%",  deltaUp: false, brand: "snapchat"  as const },
 ]
 
 const browsers = [
-  { label: "Chrome",  value: "62.5%", delta: "+5.06%", deltaUp: true,  initials: "Ch", tint: "amber"  as const },
-  { label: "Firefox", value: "12.3%", delta: "+1.50%", deltaUp: true,  initials: "Fx", tint: "orange" as const },
-  { label: "Safari",  value: "9.86%", delta: "+1.03%", deltaUp: true,  initials: "Sf", tint: "blue"   as const },
-  { label: "Brave",   value: "5.42%", delta: "-1.30%", deltaUp: false, initials: "Br", tint: "red"    as const },
-  { label: "Opera",   value: "3.18%", delta: "+0.60%", deltaUp: true,  initials: "Op", tint: "red"    as const },
-  { label: "Tor",     value: "2.04%", delta: "+0.40%", deltaUp: true,  initials: "T",  tint: "violet" as const },
+  { label: "Chrome",  value: "62.5%", delta: "+5.06%", deltaUp: true,  brand: "chrome"  as const },
+  { label: "Firefox", value: "12.3%", delta: "+1.50%", deltaUp: true,  brand: "firefox" as const },
+  { label: "Safari",  value: "9.86%", delta: "+1.03%", deltaUp: true,  brand: "safari"  as const },
+  { label: "Brave",   value: "5.42%", delta: "-1.30%", deltaUp: false, brand: "brave"   as const },
+  { label: "Opera",   value: "3.18%", delta: "+0.60%", deltaUp: true,  brand: "opera"   as const },
+  { label: "Tor",     value: "2.04%", delta: "+0.40%", deltaUp: true,  brand: "tor"     as const },
   { label: "Edge",    value: "1.92%", delta: "+0.42%", deltaUp: true,  initials: "Ed", tint: "blue"   as const },
   { label: "Other",   value: "2.78%", delta: "-2.10%", deltaUp: false, initials: "··", tint: "violet" as const },
 ]
@@ -464,11 +466,12 @@ export default function AnalyticsDashboardPage() {
                   <TableCell className="text-right tabular-nums text-ink-2">{p.bounce}</TableCell>
                   <TableCell className="text-right tabular-nums text-ink-2">{p.conv}</TableCell>
                   <TableCell className="text-right">
-                    <div className="inline-flex items-center gap-1">
-                      <Button variant="ghost" size="icon-sm" aria-label="View"><Eye size={14} /></Button>
-                      <Button variant="ghost" size="icon-sm" aria-label="Edit"><Edit size={14} /></Button>
-                      <Button variant="ghost" size="icon-sm" aria-label="Delete"><Trash2 size={14} /></Button>
-                    </div>
+                    <RowActionMenu>
+                      <DropdownMenuItem><Eye />View</DropdownMenuItem>
+                      <DropdownMenuItem><Edit />Edit</DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem variant="destructive"><Trash2 />Delete</DropdownMenuItem>
+                    </RowActionMenu>
                   </TableCell>
                 </TableRow>
               ))}

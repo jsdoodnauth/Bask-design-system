@@ -1,7 +1,7 @@
 "use client"
 
 import {
-  ShoppingBag, DollarSign, TrendingUp, AlertCircle, RefreshCcw,
+  ShoppingBag, DollarSign, AlertCircle, RefreshCcw,
   MoreHorizontal, Search, Filter, Download, Upload, Eye, Edit, Trash2,
 } from "lucide-react"
 import {
@@ -14,6 +14,7 @@ import { Badge, BadgeDot } from "@/components/ui/badge"
 import { Avatar } from "@/components/ui/avatar"
 import { MiniStat } from "@/components/ui/mini-stat"
 import { KPIStrip } from "@/components/ui/kpi-strip"
+import { Gauge } from "@/components/ui/gauge"
 import { Alert, AlertTitle, AlertDescription, AlertActions } from "@/components/ui/alert"
 import { WorldMap } from "@/components/ui/world-map"
 import { SourceList } from "@/components/ui/source-list"
@@ -27,10 +28,11 @@ import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/
 import {
   Table, TableHeader, TableBody, TableRow, TableHead, TableCell,
 } from "@/components/ui/table"
+import { RowActionMenu } from "@/components/ui/row-action-menu"
+import { DropdownMenuItem, DropdownMenuSeparator } from "@/components/ui/dropdown-menu"
 
 const sparkOrders  = [22, 28, 25, 31, 27, 38, 34, 42, 39, 48]
 const sparkRevenue = [44, 40, 46, 42, 48, 45, 52, 49, 56, 53]
-const sparkGrowth  = [16, 22, 19, 26, 24, 32, 28, 36, 33, 41]
 
 const performanceData = Array.from({ length: 30 }, (_, i) => ({
   d: `${i + 1}`,
@@ -122,11 +124,22 @@ export default function EcommerceDashboardPage() {
           tint="green" icon={<DollarSign size={14} />} series={sparkRevenue} spark="bar"
           sub="Last 30 Days"
         />
-        <MiniStat
-          label="Growth" value="+25.0%" delta="+4.87%" deltaUp
-          tint="blue" icon={<TrendingUp size={14} />} series={sparkGrowth}
-          sub="Last 30 Days"
-        />
+        <Card>
+          <CardHeader>
+            <CardTitle>Conv. Rate</CardTitle>
+            <CardAction>
+              <Badge variant="success">+4.87%</Badge>
+            </CardAction>
+          </CardHeader>
+          <CardContent className="flex flex-col items-stretch">
+            <Gauge
+              value={72}
+              size={140}
+              valueColor="var(--blue)"
+              sublabel="Goal 100%"
+            />
+          </CardContent>
+        </Card>
       </div>
 
       {/* Row 2 — Store Performance Analytics */}
@@ -334,11 +347,12 @@ export default function EcommerceDashboardPage() {
                   <TableCell className="text-ink-2">{o.method}</TableCell>
                   <TableCell className="text-right"><Badge variant={o.status}>{o.label}</Badge></TableCell>
                   <TableCell className="text-right">
-                    <div className="inline-flex items-center gap-1">
-                      <Button variant="ghost" size="icon-sm" aria-label="View"><Eye size={14} /></Button>
-                      <Button variant="ghost" size="icon-sm" aria-label="Edit"><Edit size={14} /></Button>
-                      <Button variant="ghost" size="icon-sm" aria-label="Delete"><Trash2 size={14} /></Button>
-                    </div>
+                    <RowActionMenu>
+                      <DropdownMenuItem><Eye />View</DropdownMenuItem>
+                      <DropdownMenuItem><Edit />Edit</DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem variant="destructive"><Trash2 />Delete</DropdownMenuItem>
+                    </RowActionMenu>
                   </TableCell>
                 </TableRow>
               ))}

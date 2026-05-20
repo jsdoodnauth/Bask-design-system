@@ -26,6 +26,8 @@ import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/
 import {
   Table, TableHeader, TableBody, TableRow, TableHead, TableCell,
 } from "@/components/ui/table"
+import { RowActionMenu } from "@/components/ui/row-action-menu"
+import { DropdownMenuItem, DropdownMenuSeparator } from "@/components/ui/dropdown-menu"
 
 const sparkProjects = [22, 28, 25, 31, 27, 38, 34, 42, 39, 48]
 const sparkTasks    = [42, 48, 45, 52, 50, 58, 56, 64, 62, 70]
@@ -327,11 +329,12 @@ export default function ProjectsDashboardPage() {
                   </TableCell>
                   <TableCell><Badge variant={p.status}>{p.label}</Badge></TableCell>
                   <TableCell className="text-right">
-                    <div className="inline-flex items-center gap-1">
-                      <Button variant="ghost" size="icon-sm" aria-label="View"><Eye size={14} /></Button>
-                      <Button variant="ghost" size="icon-sm" aria-label="Edit"><Edit size={14} /></Button>
-                      <Button variant="ghost" size="icon-sm" aria-label="Archive"><Archive size={14} /></Button>
-                    </div>
+                    <RowActionMenu>
+                      <DropdownMenuItem><Eye />View</DropdownMenuItem>
+                      <DropdownMenuItem><Edit />Edit</DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem><Archive />Archive</DropdownMenuItem>
+                    </RowActionMenu>
                   </TableCell>
                 </TableRow>
               ))}
@@ -383,11 +386,12 @@ export default function ProjectsDashboardPage() {
                   <TableCell><Badge variant={t.status}>{t.label}</Badge></TableCell>
                   <TableCell className="text-right tabular-nums text-ink-2">{t.time}</TableCell>
                   <TableCell className="text-right">
-                    <div className="inline-flex items-center gap-1">
-                      <Button variant="ghost" size="icon-sm" aria-label="View"><Eye size={14} /></Button>
-                      <Button variant="ghost" size="icon-sm" aria-label="Edit"><Edit size={14} /></Button>
-                      <Button variant="ghost" size="icon-sm" aria-label="Done"><CheckCircle2 size={14} /></Button>
-                    </div>
+                    <RowActionMenu>
+                      <DropdownMenuItem><Eye />View</DropdownMenuItem>
+                      <DropdownMenuItem><Edit />Edit</DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem><CheckCircle2 />Mark done</DropdownMenuItem>
+                    </RowActionMenu>
                   </TableCell>
                 </TableRow>
               ))}

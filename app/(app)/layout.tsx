@@ -2,9 +2,11 @@ import * as React from "react"
 import {
   Globe, Users, BarChart3, Database,
   Settings, CreditCard, LineChart, Contact, ShoppingBag,
-  Bell, Mail, ShoppingCart, Code2, Languages,
+  Bell, Mail, ShoppingCart, Languages,
   Wallet, FolderKanban,
 } from "lucide-react"
+
+import { BrandIcon } from "@/components/ui/brand-icon"
 
 import {
   Sidebar, SidebarBrand, SidebarSection, SidebarSectionLabel,
@@ -85,7 +87,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
               <Bell size={16} />
             </TopNavIconButton>
             <TopNavIconButton label="GitHub">
-              <Code2 size={16} />
+              <BrandIcon slug="github" size={16} colored={false} />
             </TopNavIconButton>
             <TopNavIconButton label="Language">
               <Languages size={16} />
