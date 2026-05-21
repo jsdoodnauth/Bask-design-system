@@ -13,6 +13,7 @@
     "@icons-pack/react-simple-icons": "^13.13.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "flag-icons": "^7.5.0",
     "framer-motion": "^12.38.0",
     "jsvectormap": "^1.7.0",
     "lucide-react": "^1.16.0",

@@ -65,6 +65,39 @@ function PageHeaderActions({ className, ...props }: React.ComponentProps<"div">)
   )
 }
 
+/** Title-on-left, breadcrumbs-on-right shorthand. Wraps the four <PageHeader*>
+ *  parts so dashboards don't have to re-spell the layout. Pass `meta` for the
+ *  status line under the title and `breadcrumbs` for the right rail. */
+function PageHeaderWithCrumbs({
+  title,
+  meta,
+  breadcrumbs,
+  actions,
+  className,
+  ...props
+}: Omit<React.ComponentProps<"header">, "title"> & {
+  title: React.ReactNode
+  meta?: React.ReactNode
+  breadcrumbs?: React.ReactNode
+  /** Extra actions rendered after the breadcrumbs. */
+  actions?: React.ReactNode
+}) {
+  return (
+    <PageHeader className={className} {...props}>
+      <div>
+        <PageHeaderTitle>{title}</PageHeaderTitle>
+        {meta && <PageHeaderMeta>{meta}</PageHeaderMeta>}
+      </div>
+      {(breadcrumbs || actions) && (
+        <PageHeaderActions>
+          {breadcrumbs}
+          {actions}
+        </PageHeaderActions>
+      )}
+    </PageHeader>
+  )
+}
+
 export {
   AppShell,
   AppMain,
@@ -72,4 +105,5 @@ export {
   PageHeaderTitle,
   PageHeaderMeta,
   PageHeaderActions,
+  PageHeaderWithCrumbs,
 }

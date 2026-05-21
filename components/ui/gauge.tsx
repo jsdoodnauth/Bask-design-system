@@ -1,9 +1,10 @@
 "use client"
 
 import * as React from "react"
-import { RadialBarChart, RadialBar, PolarAngleAxis, ResponsiveContainer } from "recharts"
+import { RadialBarChart, RadialBar, PolarAngleAxis } from "recharts"
 
 import { cn } from "@/lib/utils"
+import { MeasuredResponsiveContainer } from "@/components/ui/chart"
 
 const ARC_ANGLES = {
   half:           { start: 180, end: 0   },  // 180° opening down
@@ -57,7 +58,7 @@ function Gauge({
       className={cn("relative w-full", className)}
       style={{ height: size }}
     >
-      <ResponsiveContainer width="100%" height="100%">
+      <MeasuredResponsiveContainer className="size-full">
         <RadialBarChart
           data={[{ value: pct }]}
           innerRadius={innerRadius}
@@ -75,7 +76,7 @@ function Gauge({
             isAnimationActive={false}
           />
         </RadialBarChart>
-      </ResponsiveContainer>
+      </MeasuredResponsiveContainer>
       {showLabel ? (
         <div
           className={cn(

@@ -2,15 +2,16 @@
 
 import {
   Wallet, ArrowDownToLine, ArrowUpFromLine, RefreshCcw, AlertCircle,
-  Send, Plus, MoreHorizontal, Search, Filter, Download,
+  Send, MoreHorizontal, Search, Filter, Download,
   TrendingUp, PiggyBank, LineChart as LineIcon, Receipt,
   Car, Plane, GraduationCap, Home, Heart,
 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
+import { ToastActionButton } from "@/components/ui/toast-action-button"
 import { Card, CardHeader, CardTitle, CardContent, CardAction } from "@/components/ui/card"
 import { Badge, BadgeDot } from "@/components/ui/badge"
-import { Avatar } from "@/components/ui/avatar"
+import { RecipientStack } from "@/components/ui/recipient-stack"
 import { MiniStat } from "@/components/ui/mini-stat"
 import { MetricTile } from "@/components/ui/metric-tile"
 import { Alert, AlertIcon, AlertTitle, AlertDescription, AlertActions } from "@/components/ui/alert"
@@ -25,6 +26,8 @@ import {
 import {
   Progress, ProgressTrack, ProgressIndicator,
 } from "@/components/ui/progress"
+import { CreditCardVisual } from "@/components/ui/credit-card-visual"
+import { GoalCard } from "@/components/ui/goal-card"
 
 const sparkIn   = [22, 28, 25, 31, 27, 38, 34, 42, 39, 48]
 const sparkOut  = [38, 34, 36, 32, 30, 28, 30, 28, 26, 24]
@@ -126,34 +129,13 @@ export default function FinanceDashboardPage() {
               </div>
             </div>
 
-            {/* Debit-card visual rendered as a styled card */}
-            <div
-              data-slot="card"
-              className="relative rounded-lg p-5 text-white overflow-hidden"
-              style={{
-                background: "linear-gradient(135deg, var(--violet), var(--blue))",
-                minHeight: 180,
-              }}
-            >
-              <div className="flex items-center justify-between">
-                <span className="text-[length:var(--fs-12)] uppercase tracking-[var(--tracking-eyebrow)] font-bold opacity-80">Bask Visa Debit</span>
-                <span className="font-display text-[length:var(--fs-18)] font-bold tracking-[var(--tracking-display)]">Bask</span>
-              </div>
-              <div className="mt-8">
-                <span className="block text-[length:var(--fs-12)] uppercase tracking-[var(--tracking-eyebrow)] font-bold opacity-70">Card number</span>
-                <span className="block text-[length:var(--fs-18)] font-mono tabular-nums tracking-wider">4929 •••• •••• 1894</span>
-              </div>
-              <div className="mt-3 flex items-end justify-between">
-                <div>
-                  <span className="block text-[length:var(--fs-12)] uppercase tracking-[var(--tracking-eyebrow)] font-bold opacity-70">Holder</span>
-                  <span className="block text-[length:var(--fs-14)] font-semibold">David Devi</span>
-                </div>
-                <div>
-                  <span className="block text-[length:var(--fs-12)] uppercase tracking-[var(--tracking-eyebrow)] font-bold opacity-70 text-right">Expires</span>
-                  <span className="block text-[length:var(--fs-14)] font-semibold">08/29</span>
-                </div>
-              </div>
-            </div>
+            <CreditCardVisual
+              productLabel="Bask Visa Debit"
+              brand="Bask"
+              number="4929 •••• •••• 1894"
+              holder="David Devi"
+              expiry="08/29"
+            />
           </div>
         </CardContent>
       </Card>
@@ -171,7 +153,14 @@ export default function FinanceDashboardPage() {
         <CardHeader>
           <CardTitle>Financial Overview</CardTitle>
           <CardAction className="flex items-center gap-2">
-            <Button variant="ghost" size="sm"><RefreshCcw size={14} />Refresh</Button>
+            <ToastActionButton
+              variant="ghost"
+              size="sm"
+              toastTitle="Refreshing balances…"
+              toastDescription="Re-syncing accounts from your providers."
+            >
+              <RefreshCcw size={14} />Refresh
+            </ToastActionButton>
             <Button variant="ghost" size="sm"><Download size={14} />Export</Button>
             <Button variant="ghost" size="icon-sm" aria-label="More"><MoreHorizontal size={14} /></Button>
           </CardAction>
@@ -234,26 +223,7 @@ export default function FinanceDashboardPage() {
             </CardAction>
           </CardHeader>
           <CardContent>
-            <div className="flex items-center gap-2 mb-4">
-              {recipients.map((r) => (
-                <button
-                  key={r.name}
-                  type="button"
-                  className="flex flex-col items-center gap-1 rounded-md p-1 hover:bg-surface-2 cursor-pointer outline-none"
-                  aria-label={`Send to ${r.name}`}
-                >
-                  <Avatar size="default" color={r.color}>{r.initials}</Avatar>
-                  <span className="text-[length:var(--fs-12)] text-ink-2 truncate max-w-[64px]">{r.name}</span>
-                </button>
-              ))}
-              <button
-                type="button"
-                className="size-9 rounded-full grid place-items-center bg-surface-2 text-ink-2 [box-shadow:var(--elev-inset)] hover:bg-surface-3 cursor-pointer outline-none"
-                aria-label="Add recipient"
-              >
-                <Plus size={16} />
-              </button>
-            </div>
+            <RecipientStack recipients={recipients} className="mb-4" />
             <div className="grid grid-cols-[1fr_auto_1fr] gap-2 items-end mb-3">
               <div>
                 <label className="text-[length:var(--fs-12)] text-ink-3 uppercase font-bold tracking-[var(--tracking-eyebrow)] block mb-1">Send</label>
@@ -337,29 +307,15 @@ export default function FinanceDashboardPage() {
         <CardContent>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 16 }}>
             {goals.map((g) => (
-              <div
+              <GoalCard
                 key={g.label}
-                data-slot="card"
-                className="bg-surface rounded-md p-4 flex flex-col gap-3"
-              >
-                <div className="flex items-center gap-3">
-                  <div className={`size-10 rounded-sm grid place-items-center flex-none bg-tint-${g.tint} text-${g.tint} [box-shadow:var(--elev-1)]`}>
-                    {g.icon}
-                  </div>
-                  <div className="flex flex-col min-w-0">
-                    <span className="text-[length:var(--fs-14)] font-semibold text-ink truncate">{g.label}</span>
-                    <span className="text-[length:var(--fs-12)] text-ink-3 tabular-nums">{g.saved} of {g.target}</span>
-                  </div>
-                </div>
-                <Progress value={g.pct}>
-                  <ProgressTrack>
-                    <ProgressIndicator
-                      style={{ width: `${g.pct}%`, background: `var(--${g.tint})` }}
-                    />
-                  </ProgressTrack>
-                </Progress>
-                <Badge variant="success" className="self-start">{g.pct}% complete</Badge>
-              </div>
+                icon={g.icon}
+                tint={g.tint}
+                label={g.label}
+                saved={g.saved}
+                target={g.target}
+                percent={g.pct}
+              />
             ))}
           </div>
         </CardContent>

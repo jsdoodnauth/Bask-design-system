@@ -6,6 +6,7 @@ import { ArrowUpRight, ArrowDownRight } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
 import { BrandIcon, type BrandSlug } from "@/components/ui/brand-icon"
+import { Flag } from "@/components/ui/flag"
 import type { StatTint } from "@/components/ui/stat"
 
 const TINT_BG: Record<StatTint, string> = {
@@ -35,6 +36,9 @@ export interface SourceRow {
   /** Brand slug — renders an `@icons-pack/react-simple-icons` glyph in brand color
    *  inside a neutral tile. Takes precedence over `icon` / `initials`. */
   brand?: BrandSlug
+  /** ISO 3166-1 alpha-2 country code — renders a country flag in a neutral tile.
+   *  Takes precedence over `brand` / `icon` / `initials`. */
+  iso?: string
   /** Custom icon node rendered in the tinted tile on the left. */
   icon?: React.ReactNode
   /** Initials shown if no icon / brand is given. */
@@ -51,6 +55,7 @@ function SourceList({ rows, className, ...props }: SourceListProps) {
     <div data-slot="source-list" className={cn("flex flex-col", className)} {...props}>
       {rows.map((row, i) => {
         const tint: StatTint = row.tint ?? "blue"
+        const neutralTile = !!(row.brand || row.iso)
         return (
           <div
             key={i}
@@ -63,14 +68,16 @@ function SourceList({ rows, className, ...props }: SourceListProps) {
               <div
                 aria-hidden
                 className={cn(
-                  "size-8 rounded-sm grid place-items-center flex-none font-bold text-[length:var(--fs-12)]",
+                  "size-8 rounded-sm grid place-items-center flex-none font-bold text-[length:var(--fs-12)] overflow-hidden",
                   "[box-shadow:var(--elev-1)]",
-                  row.brand ? "bg-surface-3 text-ink" : cn(TINT_BG[tint], TINT_INK[tint]),
+                  neutralTile ? "bg-surface-3 text-ink" : cn(TINT_BG[tint], TINT_INK[tint]),
                 )}
               >
-                {row.brand
-                  ? <BrandIcon slug={row.brand} size={16} />
-                  : (row.icon ?? row.initials ?? row.label.charAt(0))}
+                {row.iso
+                  ? <Flag iso={row.iso} size={18} rounded={false} />
+                  : row.brand
+                    ? <BrandIcon slug={row.brand} size={16} />
+                    : (row.icon ?? row.initials ?? row.label.charAt(0))}
               </div>
               <span className="text-[length:var(--fs-14)] font-medium text-ink truncate">
                 {row.label}

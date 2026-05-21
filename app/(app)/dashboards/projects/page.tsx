@@ -2,7 +2,7 @@
 
 import {
   FolderKanban, ListChecks, DollarSign, Activity as ActIcon,
-  Play, Clock, MoreHorizontal, Search, Filter, Download,
+  Clock, MoreHorizontal, Search, Filter, Download,
   Eye, Edit, Archive, CheckCircle2, CircleDot, CircleOff, CircleAlert,
 } from "lucide-react"
 import {
@@ -10,13 +10,13 @@ import {
 } from "recharts"
 
 import { Button } from "@/components/ui/button"
+import { ToastActionButton } from "@/components/ui/toast-action-button"
 import { Card, CardHeader, CardTitle, CardContent, CardAction } from "@/components/ui/card"
 import { Badge, BadgeDot } from "@/components/ui/badge"
 import { Avatar, AvatarGroup } from "@/components/ui/avatar"
 import { MiniStat } from "@/components/ui/mini-stat"
 import { MetricTile } from "@/components/ui/metric-tile"
 import { KPIStrip } from "@/components/ui/kpi-strip"
-import { HorizontalBarRow } from "@/components/ui/horizontal-bar"
 import { Breadcrumbs } from "@/components/ui/breadcrumbs"
 import { Input } from "@/components/ui/input"
 import {
@@ -28,6 +28,10 @@ import {
 } from "@/components/ui/table"
 import { RowActionMenu } from "@/components/ui/row-action-menu"
 import { DropdownMenuItem, DropdownMenuSeparator } from "@/components/ui/dropdown-menu"
+import { ScheduleItem } from "@/components/ui/schedule-item"
+import { TimerDisplay } from "@/components/ui/timer-display"
+import { StackedSegmentBar } from "@/components/ui/stacked-segment-bar"
+import { BulletBar } from "@/components/ui/bullet-bar"
 
 const sparkProjects = [22, 28, 25, 31, 27, 38, 34, 42, 39, 48]
 const sparkTasks    = [42, 48, 45, 52, 50, 58, 56, 64, 62, 70]
@@ -125,16 +129,20 @@ export default function ProjectsDashboardPage() {
             </CardAction>
           </CardHeader>
           <CardContent>
-            <div className="flex items-center gap-3 mb-3">
+            <div className="flex items-start gap-3">
               <div className="size-12 rounded-md grid place-items-center bg-tint-violet text-violet [box-shadow:var(--elev-1)] flex-none">
                 <Clock size={22} />
               </div>
-              <div className="flex flex-col">
-                <span className="text-[length:var(--fs-12)] text-ink-3 uppercase font-bold tracking-[var(--tracking-eyebrow)]">Tracked today</span>
-                <span className="font-mono font-bold tabular-nums text-[length:var(--fs-28)] text-ink leading-tight">05:30:57</span>
+              <div className="flex flex-col flex-1 min-w-0">
+                <span className="text-[length:var(--fs-12)] text-ink-3 uppercase font-bold tracking-[var(--tracking-eyebrow)] mb-1">Tracked today</span>
+                <TimerDisplay
+                  initialSeconds={19857}
+                  buttonVariant="primary"
+                  buttonSize="sm"
+                  startLabel="Start tracker"
+                />
               </div>
             </div>
-            <Button variant="primary" size="sm" className="w-full"><Play size={14} />Start tracker</Button>
           </CardContent>
         </Card>
 
@@ -148,6 +156,16 @@ export default function ProjectsDashboardPage() {
             </CardAction>
           </CardHeader>
           <CardContent>
+            <StackedSegmentBar
+              className="mb-4"
+              height={14}
+              showLegend={false}
+              segments={statusBreakdown.map((s) => ({
+                label: s.label,
+                value: s.count,
+                tint: s.tint,
+              }))}
+            />
             <div className="grid grid-cols-4 gap-4">
               {statusBreakdown.map((s) => (
                 <MetricTile
@@ -171,7 +189,14 @@ export default function ProjectsDashboardPage() {
           <CardTitle>Projects Performance Overview</CardTitle>
           <CardAction className="flex items-center gap-2">
             <Badge variant="info">12 months</Badge>
-            <Button variant="ghost" size="sm"><Download size={14} />Export CSV</Button>
+            <ToastActionButton
+              variant="ghost"
+              size="sm"
+              toastTitle="CSV export started"
+              toastDescription="Performance overview for the last 12 months."
+            >
+              <Download size={14} />Export CSV
+            </ToastActionButton>
             <Button variant="ghost" size="icon-sm" aria-label="More"><MoreHorizontal size={14} /></Button>
           </CardAction>
         </CardHeader>
@@ -210,24 +235,15 @@ export default function ProjectsDashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="flex flex-col">
-              {schedule.map((s, i) => (
-                <div
+              {schedule.map((s) => (
+                <ScheduleItem
                   key={s.title}
-                  className={
-                    "grid grid-cols-[80px_auto_1fr] gap-3 items-center py-3 " +
-                    (i > 0 ? "border-t border-[color:var(--hairline)]" : "")
-                  }
-                >
-                  <div className="font-mono text-[length:var(--fs-13)] text-ink-2 tabular-nums">
-                    <div>{s.start}</div>
-                    <div className="text-ink-3 text-[11px]">{s.end}</div>
-                  </div>
-                  <span aria-hidden className={`size-2 rounded-full`} style={{ background: `var(--${s.tint})` }} />
-                  <div className="flex flex-col min-w-0">
-                    <strong className="text-[length:var(--fs-14)] truncate">{s.title}</strong>
-                    <span className="text-[length:var(--fs-12)] text-ink-3 truncate">{s.who}</span>
-                  </div>
-                </div>
+                  start={s.start}
+                  end={s.end}
+                  tint={s.tint}
+                  title={s.title}
+                  who={s.who}
+                />
               ))}
             </div>
           </CardContent>
@@ -243,21 +259,28 @@ export default function ProjectsDashboardPage() {
           <CardContent>
             <div className="flex flex-col gap-3">
               {[
-                { name: "Engineering", pct: 78, tint: "violet" as const, used: "624h", total: "800h" },
-                { name: "Design",      pct: 52, tint: "blue"   as const, used: "208h", total: "400h" },
-                { name: "QA",          pct: 64, tint: "amber"  as const, used: "192h", total: "300h" },
-                { name: "Ops",         pct: 38, tint: "green"  as const, used: "120h", total: "320h" },
+                { name: "Engineering", used: 624, total: 800, tint: "violet" as const },
+                { name: "Design",      used: 208, total: 400, tint: "blue"   as const },
+                { name: "QA",          used: 192, total: 300, tint: "amber"  as const },
+                { name: "Ops",         used: 120, total: 320, tint: "green"  as const },
               ].map((t) => (
-                <HorizontalBarRow
+                <div
                   key={t.name}
-                  label={t.name}
-                  value={t.pct}
-                  tint={t.tint}
-                  tail={`${t.used} / ${t.total}`}
-                  labelWidth={92}
-                  tailWidth={88}
-                  height={24}
-                />
+                  className="grid items-center gap-3 grid-cols-[92px_1fr_92px]"
+                >
+                  <span className="text-[length:var(--fs-13)] font-medium text-ink-2 truncate">{t.name}</span>
+                  <BulletBar
+                    value={t.used}
+                    target={Math.round(t.total * 0.8)}
+                    max={t.total}
+                    tint={t.tint}
+                    height={14}
+                    showCaption={false}
+                  />
+                  <span className="text-[length:var(--fs-13)] text-ink-3 tabular-nums text-right">
+                    {t.used}h / {t.total}h
+                  </span>
+                </div>
               ))}
             </div>
           </CardContent>

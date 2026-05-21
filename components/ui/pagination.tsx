@@ -6,6 +6,9 @@ import { ChevronLeftIcon, ChevronRightIcon, MoreHorizontalIcon } from "lucide-re
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
+import {
+  Select, SelectTrigger, SelectValue, SelectContent, SelectItem,
+} from "@/components/ui/select"
 
 const PaginationLayoutContext = React.createContext<string | null>(null)
 
@@ -131,7 +134,55 @@ function PaginationEllipsis({ className, ...props }: React.ComponentProps<"span"
   )
 }
 
+interface PageSizeSelectorProps {
+  /** Currently selected page size. */
+  value: number
+  /** Fired with the next page size. */
+  onValueChange: (next: number) => void
+  /** Available page sizes. Default 5/10/15/20/50. */
+  options?: number[]
+  /** Label text to the left of the selector. Default "Rows per page". */
+  label?: React.ReactNode
+  className?: string
+}
+
+function PageSizeSelector({
+  value,
+  onValueChange,
+  options = [5, 10, 15, 20, 50],
+  label = "Rows per page",
+  className,
+}: PageSizeSelectorProps) {
+  return (
+    <div
+      data-slot="page-size-selector"
+      className={cn(
+        "inline-flex items-center gap-2 text-[length:var(--fs-13)] text-ink-3",
+        className
+      )}
+    >
+      {label && <span>{label}</span>}
+      <Select
+        value={String(value)}
+        onValueChange={(v) => onValueChange(Number(v))}
+      >
+        <SelectTrigger className="h-8 min-w-[68px] px-2.5 text-[length:var(--fs-13)]">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent align="end">
+          {options.map((opt) => (
+            <SelectItem key={opt} value={String(opt)}>
+              {opt}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </div>
+  )
+}
+
 export {
   Pagination, PaginationContent, PaginationItem, PaginationLink,
   PaginationPrevious, PaginationNext, PaginationEllipsis,
+  PageSizeSelector,
 }

@@ -2,6 +2,7 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 @import "jsvectormap/dist/jsvectormap.min.css";
+@import "flag-icons/css/flag-icons.min.css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -953,6 +954,49 @@ h3 {
 /* --- Sidebar shell (static elevation; not in parallax SELECTOR) --- */
 [data-slot="sidebar"] { box-shadow: var(--elev-2); }
 
+/* --- Sidebar: collapsible-rail mode ---
+   Outer aside collapses to 56px when pinned; expands to 240px when:
+   - not pinned-collapsed,
+   - hovered (Sidebar tracks hover via JS so the in-rail toggle can release it
+     on click — pure CSS :hover would trap the rail open until cursor leaves),
+   - or focus-within (keyboard tabbing into a nav item reveals labels).
+   Inner elements opt into the collapse with [data-sb-collapse-hide] /
+   [data-sb-collapse-only]. We accept a small layout shift on rail-expand;
+   overlay-style expansion would break sticky positioning. */
+[data-slot="sidebar"][data-collapsible] {
+  width: 240px;
+  transition: width var(--dur) var(--ease);
+  will-change: width;
+}
+[data-slot="sidebar"][data-collapsed]:not([data-rail-expanded]):not(:focus-within) {
+  width: 56px;
+  padding-left: 8px;
+  padding-right: 8px;
+}
+[data-slot="sidebar"][data-collapsed]:not([data-rail-expanded]):not(:focus-within) [data-sb-collapse-hide] {
+  display: none;
+}
+/* Default-hide the collapsed-only glyphs; revealed below. */
+[data-slot="sidebar"] [data-sb-collapse-only] { display: none; }
+[data-slot="sidebar"][data-collapsed]:not([data-rail-expanded]):not(:focus-within) [data-sb-collapse-only] {
+  display: inline;
+}
+/* When railed, nav items + toggle center their icon so the glyph lands in the 40px rail. */
+[data-slot="sidebar"][data-collapsed]:not([data-rail-expanded]):not(:focus-within) [data-slot="nav-item"],
+[data-slot="sidebar"][data-collapsed]:not([data-rail-expanded]):not(:focus-within) [data-slot="sidebar-collapse-toggle"] {
+  justify-content: center;
+  padding-left: 8px;
+  padding-right: 8px;
+}
+[data-slot="sidebar"][data-collapsed]:not([data-rail-expanded]):not(:focus-within) [data-slot="sidebar-section"] {
+  margin-top: 6px;
+}
+/* Theme picker collapses to just the light/dark icon when railed — the tone
+   dropdown trigger is wider than 40px and would clip. */
+[data-slot="sidebar"][data-collapsed]:not([data-rail-expanded]):not(:focus-within) [data-slot="theme-picker"] {
+  justify-content: center;
+}
+
 /* --- Activity timeline: hairline between consecutive items --- */
 [data-slot="activity-item"] + [data-slot="activity-item"] {
   border-top: 1px solid var(--hairline);
@@ -966,6 +1010,11 @@ h3 {
 
 /* --- Field row: hairline between consecutive rows --- */
 [data-slot="field-row"] + [data-slot="field-row"] {
+  border-top: 1px solid var(--hairline);
+}
+
+/* --- Schedule items: hairline between consecutive rows --- */
+[data-slot="schedule-item"] + [data-slot="schedule-item"] {
   border-top: 1px solid var(--hairline);
 }
 

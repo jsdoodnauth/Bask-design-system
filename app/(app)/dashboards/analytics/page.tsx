@@ -5,11 +5,9 @@ import {
   Mail, Share2, ArrowDownToLine, PartyPopper,
   MoreHorizontal, Download, Upload, Trash2, Edit, Eye,
 } from "lucide-react"
-import {
-  AreaChart, Area, XAxis, YAxis, CartesianGrid,
-} from "recharts"
 
 import { Button } from "@/components/ui/button"
+import { ToastActionButton } from "@/components/ui/toast-action-button"
 import { Card, CardHeader, CardTitle, CardContent, CardAction } from "@/components/ui/card"
 import { Badge, BadgeDot } from "@/components/ui/badge"
 import { MiniStat } from "@/components/ui/mini-stat"
@@ -21,7 +19,6 @@ import { Breadcrumbs } from "@/components/ui/breadcrumbs"
 import {
   PageHeader, PageHeaderTitle, PageHeaderMeta, PageHeaderActions,
 } from "@/components/ui/app-shell"
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
 import {
   Table, TableHeader, TableBody, TableRow, TableHead, TableCell,
 } from "@/components/ui/table"
@@ -30,6 +27,9 @@ import { DropdownMenuItem, DropdownMenuSeparator } from "@/components/ui/dropdow
 import {
   Progress, ProgressTrack, ProgressIndicator,
 } from "@/components/ui/progress"
+import { MilestoneCallout } from "@/components/ui/milestone-callout"
+import { CountryRow } from "@/components/ui/country-row"
+import { StackedAreaChart } from "@/components/ui/stacked-area-chart"
 
 const sparkOrders   = [22, 28, 25, 31, 27, 38, 34, 42, 39, 48]
 const sparkVisitors = [44, 40, 46, 42, 48, 45, 52, 49, 56, 53]
@@ -56,10 +56,10 @@ const audiencePages = [
 ]
 
 const geoCountries = [
-  { name: "United States", flag: "🇺🇸", visits: "67.5k",  pct: "72.15%", deltaUp: true,  tint: "blue"   as const, lng: -98, lat: 39 },
-  { name: "India",         flag: "🇮🇳", visits: "7.92k",  pct: "28.65%", deltaUp: true,  tint: "amber"  as const, lng:  78, lat: 22 },
-  { name: "Brazil",        flag: "🇧🇷", visits: "89.05k", pct: "62.50%", deltaUp: true,  tint: "green"  as const, lng: -55, lat: -10 },
-  { name: "Canada",        flag: "🇨🇦", visits: "5.3k",   pct: "42.20%", deltaUp: false, tint: "violet" as const, lng:-106, lat: 56 },
+  { name: "United States", iso: "us", visits: "67.5k",  pct: "72.15%", deltaUp: true,  tint: "blue"   as const, lng: -98, lat: 39 },
+  { name: "India",         iso: "in", visits: "7.92k",  pct: "28.65%", deltaUp: true,  tint: "amber"  as const, lng:  78, lat: 22 },
+  { name: "Brazil",        iso: "br", visits: "89.05k", pct: "62.50%", deltaUp: true,  tint: "green"  as const, lng: -55, lat: -10 },
+  { name: "Canada",        iso: "ca", visits: "5.3k",   pct: "42.20%", deltaUp: false, tint: "violet" as const, lng:-106, lat: 56 },
 ] as const
 
 const trafficSources = [
@@ -96,11 +96,6 @@ const pages = [
   { name: "/about",              source: "Direct",   views:   "748", time: "01:21", bounce: "38.4%", conv: "0.9%" },
   { name: "/contact",            source: "Twitter",  views:   "612", time: "00:46", bounce: "44.2%", conv: "3.6%" },
 ]
-
-const sessionsConfig = {
-  users:    { label: "Users",    color: "var(--blue)"   },
-  sessions: { label: "Sessions", color: "var(--violet)" },
-}
 
 export default function AnalyticsDashboardPage() {
   return (
@@ -273,7 +268,14 @@ export default function AnalyticsDashboardPage() {
         <CardHeader>
           <CardTitle>Sessions Overview <span className="text-ink-3 font-normal text-[length:var(--fs-13)] ml-1">609.5k sessions</span></CardTitle>
           <CardAction className="flex items-center gap-2">
-            <Button variant="ghost" size="sm"><Download size={14} />Export</Button>
+            <ToastActionButton
+              variant="ghost"
+              size="sm"
+              toastTitle="Export queued"
+              toastDescription="Sessions Overview will download shortly."
+            >
+              <Download size={14} />Export
+            </ToastActionButton>
             <Button variant="ghost" size="sm"><Upload size={14} />Import</Button>
             <Button variant="ghost" size="icon-sm" aria-label="More"><MoreHorizontal size={14} /></Button>
           </CardAction>
@@ -288,26 +290,16 @@ export default function AnalyticsDashboardPage() {
               { label: "Avg Duration",value: "3m 12s", delta: "+7.92%", deltaUp: true  },
             ]}
           />
-          <ChartContainer config={sessionsConfig} className="h-[300px]">
-            <AreaChart data={sessionsData} margin={{ top: 8, right: 8, bottom: 0, left: -16 }}>
-              <defs>
-                <linearGradient id="aUsers" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%"  stopColor="var(--blue)"   stopOpacity={0.32} />
-                  <stop offset="100%" stopColor="var(--blue)"  stopOpacity={0}    />
-                </linearGradient>
-                <linearGradient id="aSessions" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%"  stopColor="var(--violet)" stopOpacity={0.32} />
-                  <stop offset="100%" stopColor="var(--violet)" stopOpacity={0}    />
-                </linearGradient>
-              </defs>
-              <CartesianGrid vertical={false} />
-              <XAxis dataKey="d" tickLine={false} axisLine={false} interval={3} />
-              <YAxis tickLine={false} axisLine={false} />
-              <ChartTooltip content={<ChartTooltipContent />} />
-              <Area dataKey="users"    type="monotone" stroke="var(--blue)"   strokeWidth={2} fill="url(#aUsers)"    />
-              <Area dataKey="sessions" type="monotone" stroke="var(--violet)" strokeWidth={2} fill="url(#aSessions)" />
-            </AreaChart>
-          </ChartContainer>
+          <StackedAreaChart
+            className="h-[300px]"
+            data={sessionsData}
+            xKey="d"
+            series={[
+              { key: "users",    label: "Users",    color: "var(--blue)"   },
+              { key: "sessions", label: "Sessions", color: "var(--violet)" },
+            ]}
+            margin={{ top: 8, right: 8, bottom: 0, left: -16 }}
+          />
         </CardContent>
       </Card>
 
@@ -360,14 +352,14 @@ export default function AnalyticsDashboardPage() {
             />
             <div className="grid grid-cols-2 gap-3 mt-3 pt-3 border-t border-[color:var(--hairline)]">
               {geoCountries.map((c) => (
-                <div key={c.name} className="flex items-center gap-3 min-w-0">
-                  <span aria-hidden style={{ fontSize: 22 }}>{c.flag}</span>
-                  <div className="flex flex-col min-w-0">
-                    <span className="text-[length:var(--fs-13)] font-medium text-ink truncate">{c.name}</span>
-                    <span className="text-[length:var(--fs-12)] text-ink-3 tabular-nums">{c.visits}</span>
-                  </div>
-                  <Badge variant={c.deltaUp ? "success" : "danger"} className="ml-auto">{c.pct}</Badge>
-                </div>
+                <CountryRow
+                  key={c.name}
+                  iso={c.iso}
+                  name={c.name}
+                  value={c.visits}
+                  delta={c.pct}
+                  deltaUp={c.deltaUp}
+                />
               ))}
             </div>
           </CardContent>
@@ -414,21 +406,14 @@ export default function AnalyticsDashboardPage() {
             </CardAction>
           </CardHeader>
           <CardContent>
-            <div className="flex items-start gap-4">
-              <div className="size-14 rounded-md grid place-items-center bg-tint-amber text-amber [box-shadow:var(--elev-1)] flex-none">
-                <PartyPopper size={26} />
-              </div>
-              <div className="flex flex-col">
-                <span className="text-[length:var(--fs-13)] text-ink-2 leading-snug mb-2">
-                  Congratulations — your audience just crossed a new threshold. Keep publishing to compound the curve.
-                </span>
-                <div className="flex items-baseline gap-2">
-                  <span className="text-[length:var(--fs-28)] font-bold text-ink tabular-nums">29.4k</span>
-                  <span className="text-[length:var(--fs-12)] text-ink-3 uppercase font-bold tracking-[var(--tracking-eyebrow)]">Subscribers</span>
-                </div>
-                <Button variant="primary" size="sm" className="mt-3 self-start">Send announcement</Button>
-              </div>
-            </div>
+            <MilestoneCallout
+              icon={<PartyPopper size={26} />}
+              tint="amber"
+              message="Congratulations — your audience just crossed a new threshold. Keep publishing to compound the curve."
+              value="29.4k"
+              unit="Subscribers"
+              action={<Button variant="primary" size="sm">Send announcement</Button>}
+            />
           </CardContent>
         </Card>
       </div>
@@ -444,8 +429,8 @@ export default function AnalyticsDashboardPage() {
           </CardAction>
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader>
+          <Table maxHeight={360}>
+            <TableHeader sticky>
               <TableRow>
                 <TableHead>Page path</TableHead>
                 <TableHead>Top referral</TableHead>

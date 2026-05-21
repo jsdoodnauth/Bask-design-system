@@ -77,7 +77,8 @@ function ThemePicker({ className }: { className?: string }) {
     >
       <DropdownMenu>
         <DropdownMenuTrigger
-          render={<Button variant="default" size="sm" className="flex-1 justify-start gap-2" />}
+          data-sb-collapse-hide=""
+          render={<Button variant="default" size="sm" className="flex-1 min-w-0 justify-start gap-2" />}
         >
           <span
             aria-hidden

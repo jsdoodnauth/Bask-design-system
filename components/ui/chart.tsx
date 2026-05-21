@@ -22,6 +22,50 @@ function useChart() {
   return ctx
 }
 
+/** Measures the nearest box via ResizeObserver. Returns null until the box
+ *  has a non-zero size — render charts only after that to avoid recharts'
+ *  width(-1)/height(-1) warning on React 19 + recharts 3. */
+function useMeasuredSize<T extends HTMLElement>() {
+  const ref = React.useRef<T>(null)
+  const [size, setSize] = React.useState<{ w: number; h: number } | null>(null)
+  React.useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const ro = new ResizeObserver((entries) => {
+      const r = entries[0].contentRect
+      if (r.width > 0 && r.height > 0) {
+        setSize({ w: Math.round(r.width), h: Math.round(r.height) })
+      }
+    })
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [])
+  return [ref, size] as const
+}
+
+/** Drop-in for ResponsiveContainer that measures its parent first. Use when
+ *  ChartContainer's chart-axis class set isn't wanted (e.g. sparklines, pie). */
+function MeasuredResponsiveContainer({
+  className,
+  style,
+  children,
+}: {
+  className?: string
+  style?: React.CSSProperties
+  children: React.ComponentProps<typeof RechartsPrimitive.ResponsiveContainer>["children"]
+}) {
+  const [ref, size] = useMeasuredSize<HTMLDivElement>()
+  return (
+    <div ref={ref} className={className} style={style}>
+      {size && (
+        <RechartsPrimitive.ResponsiveContainer width={size.w} height={size.h}>
+          {children}
+        </RechartsPrimitive.ResponsiveContainer>
+      )}
+    </div>
+  )
+}
+
 type ChartContainerProps = React.ComponentProps<"div"> & {
   config: ChartConfig
   children: React.ComponentProps<
@@ -41,26 +85,7 @@ function ChartContainer({
       .map(([k, v]) => [`--color-${k}`, v.color])
   ) as React.CSSProperties
 
-  // Measure the wrapper ourselves and pass numeric dimensions to
-  // ResponsiveContainer once we have them. With React 19 + recharts 3,
-  // ResponsiveContainer's own measurement runs before the parent has
-  // resolved its size and logs a width(-1)/height(-1) warning, even
-  // though the chart eventually paints correctly. Mounting the chart
-  // only after we know real dimensions avoids the warning entirely.
-  const ref = React.useRef<HTMLDivElement>(null)
-  const [size, setSize] = React.useState<{ w: number; h: number } | null>(null)
-  React.useEffect(() => {
-    const el = ref.current
-    if (!el) return
-    const ro = new ResizeObserver((entries) => {
-      const r = entries[0].contentRect
-      if (r.width > 0 && r.height > 0) {
-        setSize({ w: Math.round(r.width), h: Math.round(r.height) })
-      }
-    })
-    ro.observe(el)
-    return () => ro.disconnect()
-  }, [])
+  const [ref, size] = useMeasuredSize<HTMLDivElement>()
 
   return (
     <ChartContext.Provider value={{ config }}>
@@ -100,6 +125,9 @@ type TooltipPayloadItem = {
   payload?: Record<string, unknown>
 }
 
+type TooltipVariant = "default" | "compact" | "glass"
+type IndicatorShape = "dot" | "square" | "line"
+
 type ChartTooltipContentProps = {
   active?: boolean
   payload?: TooltipPayloadItem[]
@@ -107,6 +135,10 @@ type ChartTooltipContentProps = {
   className?: string
   hideLabel?: boolean
   hideIndicator?: boolean
+  /** Visual variant. `compact` = single-line, `glass` = translucent backdrop-blur surface. */
+  variant?: TooltipVariant
+  /** Shape of the per-series indicator. Default "dot". */
+  indicator?: IndicatorShape
   formatter?: (value: TooltipPayloadItem["value"], name: TooltipPayloadItem["name"]) => React.ReactNode
 }
 
@@ -117,16 +149,80 @@ function ChartTooltipContent({
   className,
   hideLabel,
   hideIndicator,
+  variant = "default",
+  indicator = "dot",
   formatter,
 }: ChartTooltipContentProps) {
   const { config } = useChart()
   if (!active || !payload?.length) return null
+
+  const surfaceClass =
+    variant === "glass"
+      ? "bg-[color-mix(in_oklch,var(--surface)_82%,transparent)] backdrop-blur-md"
+      : "bg-surface"
+
+  const padClass = variant === "compact" ? "px-2 py-1.5" : "p-2.5"
+  const minWidthClass = variant === "compact" ? "min-w-0" : "min-w-[8rem]"
+
+  const renderIndicator = (color: string | undefined) => {
+    if (hideIndicator) return null
+    if (indicator === "line") {
+      return (
+        <span
+          aria-hidden
+          className="w-0.5 h-3 shrink-0 rounded-full"
+          style={{ background: color }}
+        />
+      )
+    }
+    if (indicator === "square") {
+      return (
+        <span
+          aria-hidden
+          className="size-2 shrink-0 rounded-[2px]"
+          style={{ background: color }}
+        />
+      )
+    }
+    return (
+      <span
+        aria-hidden
+        className="size-2 shrink-0 rounded-full"
+        style={{ background: color }}
+      />
+    )
+  }
+
+  if (variant === "compact") {
+    const first = payload[0]
+    const key = String(first.dataKey ?? first.name ?? 0)
+    const itemConfig = config[key]
+    const indicatorColor = first.color ?? itemConfig?.color
+    return (
+      <div
+        className={cn(
+          "rounded-[var(--r-sm)] text-ink text-[length:var(--fs-12)] inline-flex items-center gap-1.5",
+          surfaceClass, padClass, minWidthClass,
+          "[box-shadow:var(--elev-3)]",
+          className,
+        )}
+      >
+        {renderIndicator(indicatorColor)}
+        {label != null && !hideLabel && <span className="text-ink-3">{label}:</span>}
+        <span className="font-semibold tabular-nums">
+          {formatter ? formatter(first.value, first.name) : first.value}
+        </span>
+      </div>
+    )
+  }
+
   return (
     <div
       className={cn(
-        "min-w-[8rem] rounded-[var(--r-sm)] bg-surface text-ink p-2.5 text-[length:var(--fs-13)]",
+        "rounded-[var(--r-sm)] text-ink text-[length:var(--fs-13)]",
+        surfaceClass, padClass, minWidthClass,
         "[box-shadow:var(--elev-3)]",
-        className
+        className,
       )}
     >
       {!hideLabel && label != null && (
@@ -139,13 +235,7 @@ function ChartTooltipContent({
           const indicatorColor = item.color ?? itemConfig?.color
           return (
             <div key={i} className="flex items-center gap-2">
-              {!hideIndicator && (
-                <span
-                  aria-hidden
-                  className="size-2 shrink-0 rounded-full"
-                  style={{ background: indicatorColor }}
-                />
-              )}
+              {renderIndicator(indicatorColor)}
               <span className="text-ink-2 flex-1">{itemConfig?.label ?? item.name}</span>
               <span className="font-medium tabular-nums">
                 {formatter ? formatter(item.value, item.name) : item.value}
@@ -197,4 +287,5 @@ function ChartLegendContent({
 
 export {
   ChartContainer, ChartTooltip, ChartTooltipContent, ChartLegend, ChartLegendContent,
+  MeasuredResponsiveContainer, useMeasuredSize,
 }

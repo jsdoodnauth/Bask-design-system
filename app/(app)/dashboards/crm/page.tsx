@@ -10,15 +10,17 @@ import {
 } from "recharts"
 
 import { Button } from "@/components/ui/button"
+import { ToastActionButton } from "@/components/ui/toast-action-button"
 import { Card, CardHeader, CardTitle, CardContent, CardAction } from "@/components/ui/card"
 import { Badge, BadgeDot } from "@/components/ui/badge"
 import { Avatar } from "@/components/ui/avatar"
 import { MiniStat } from "@/components/ui/mini-stat"
 import { DonutTotal } from "@/components/ui/donut-total"
 import { Alert, AlertDescription, AlertActions } from "@/components/ui/alert"
-import { HorizontalBarRow } from "@/components/ui/horizontal-bar"
+import { StackedSegmentBar } from "@/components/ui/stacked-segment-bar"
 import { Breadcrumbs } from "@/components/ui/breadcrumbs"
 import { Activity, ActivityItem } from "@/components/ui/activity"
+import { Flag } from "@/components/ui/flag"
 import { Input } from "@/components/ui/input"
 import {
   PageHeader, PageHeaderTitle, PageHeaderMeta, PageHeaderActions,
@@ -65,7 +67,6 @@ const dealStatusData = [
   { stage: "Canceled",   count: 8,  color: "var(--red)"     },
   { stage: "Deal Won",   count: 20, color: "var(--green)"   },
 ]
-const dealStatusMax = Math.max(...dealStatusData.map((d) => d.count))
 
 const deals = [
   { id: "BD24218", name: "Ashton M001",  company: "Verteen Lewis",  pipeline: "warn"    as const, pipelineLabel: "Negotiate", close: "26-Dec-2024", user: { name: "Adam Newcombe", initials: "AN", color: "violet" as const }, value: "1,820",  status: "info"    as const, statusLabel: "Open" },
@@ -87,9 +88,9 @@ const topPerformers = [
 ]
 
 const locations = [
-  { country: "United States", flag: "🇺🇸", sessions: "8,520", users: "4,210", pct: "62.5%", tint: "blue"  as const },
-  { country: "India",         flag: "🇮🇳", sessions: "5,128", users: "2,840", pct: "28.7%", tint: "amber" as const },
-  { country: "Australia",     flag: "🇦🇺", sessions: "2,114", users: "1,120", pct:  "8.8%", tint: "green" as const },
+  { country: "United States", iso: "us", sessions: "8,520", users: "4,210", pct: "62.5%", tint: "blue"  as const },
+  { country: "India",         iso: "in", sessions: "5,128", users: "2,840", pct: "28.7%", tint: "amber" as const },
+  { country: "Australia",     iso: "au", sessions: "2,114", users: "1,120", pct:  "8.8%", tint: "green" as const },
 ]
 
 const overviewConfig = {
@@ -163,7 +164,14 @@ export default function CRMDashboardPage() {
               <a href="#" className="underline font-semibold">Refresh now</a>
             </AlertDescription>
             <AlertActions>
-              <Button variant="default" size="sm"><RefreshCcw size={14} />Refresh</Button>
+              <ToastActionButton
+                variant="default"
+                size="sm"
+                toastTitle="Refreshing pipeline…"
+                toastDescription="Pulling the latest deals from the CRM."
+              >
+                <RefreshCcw size={14} />Refresh
+              </ToastActionButton>
             </AlertActions>
           </Alert>
           <ChartContainer config={overviewConfig} className="h-[260px]">
@@ -228,26 +236,14 @@ export default function CRMDashboardPage() {
             </CardAction>
           </CardHeader>
           <CardContent>
-            <div className="flex flex-col gap-3">
-              {dealStatusData.map((s) => (
-                <HorizontalBarRow
-                  key={s.stage}
-                  label={s.stage}
-                  value={(s.count / dealStatusMax) * 100}
-                  tint={s.color}
-                  tail={s.count}
-                  labelWidth={88}
-                  tailWidth={28}
-                  height={28}
-                />
-              ))}
-            </div>
-            <div className="mt-4 grid grid-cols-4 gap-2 text-[length:var(--fs-12)] text-ink-3 tabular-nums text-center">
-              <span>5</span>
-              <span>10</span>
-              <span>15</span>
-              <span>20</span>
-            </div>
+            <StackedSegmentBar
+              height={16}
+              segments={dealStatusData.map((s) => ({
+                label: s.stage,
+                value: s.count,
+                color: s.color,
+              }))}
+            />
           </CardContent>
         </Card>
       </div>
@@ -371,7 +367,7 @@ export default function CRMDashboardPage() {
                   <TableRow key={l.country}>
                     <TableCell>
                       <div className="flex items-center gap-2">
-                        <span style={{ fontSize: 18 }} aria-hidden>{l.flag}</span>
+                        <Flag iso={l.iso} size={16} />
                         <span className="font-medium">{l.country}</span>
                       </div>
                     </TableCell>

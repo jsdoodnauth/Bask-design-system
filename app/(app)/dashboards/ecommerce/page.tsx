@@ -9,6 +9,7 @@ import {
 } from "recharts"
 
 import { Button } from "@/components/ui/button"
+import { ToastActionButton } from "@/components/ui/toast-action-button"
 import { Card, CardHeader, CardTitle, CardContent, CardAction } from "@/components/ui/card"
 import { Badge, BadgeDot } from "@/components/ui/badge"
 import { Avatar } from "@/components/ui/avatar"
@@ -75,10 +76,10 @@ const orders = [
 ]
 
 const locations = [
-  { label: "United States", value: "$28.6k", delta: "+8.4%", deltaUp: true,  initials: "US", tint: "blue"  as const },
-  { label: "United Kingdom",value: "$18.4k", delta: "+4.2%", deltaUp: true,  initials: "UK", tint: "red"   as const },
-  { label: "Australia",     value: "$10.8k", delta: "-1.2%", deltaUp: false, initials: "AU", tint: "green" as const },
-  { label: "Germany",       value: "$8.2k",  delta: "+2.0%", deltaUp: true,  initials: "DE", tint: "amber" as const },
+  { label: "United States", value: "$28.6k", delta: "+8.4%", deltaUp: true,  iso: "us" },
+  { label: "United Kingdom",value: "$18.4k", delta: "+4.2%", deltaUp: true,  iso: "gb" },
+  { label: "Australia",     value: "$10.8k", delta: "-1.2%", deltaUp: false, iso: "au" },
+  { label: "Germany",       value: "$8.2k",  delta: "+2.0%", deltaUp: true,  iso: "de" },
 ]
 
 const perfConfig = {
@@ -147,7 +148,14 @@ export default function EcommerceDashboardPage() {
         <CardHeader>
           <CardTitle>Store Performance Analytics</CardTitle>
           <CardAction className="flex items-center gap-2">
-            <Button variant="default" size="sm"><RefreshCcw size={14} />Refresh</Button>
+            <ToastActionButton
+              variant="default"
+              size="sm"
+              toastTitle="Refreshing storefront…"
+              toastDescription="Pulling the latest orders and revenue."
+            >
+              <RefreshCcw size={14} />Refresh
+            </ToastActionButton>
             <Button variant="ghost" size="icon-sm" aria-label="More"><MoreHorizontal size={14} /></Button>
           </CardAction>
         </CardHeader>

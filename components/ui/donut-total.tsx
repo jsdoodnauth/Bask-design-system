@@ -1,9 +1,10 @@
 "use client"
 
 import * as React from "react"
-import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts"
+import { PieChart, Pie, Cell } from "recharts"
 
 import { cn } from "@/lib/utils"
+import { MeasuredResponsiveContainer } from "@/components/ui/chart"
 
 export interface DonutSlice {
   label: string
@@ -36,7 +37,7 @@ function DonutTotal({
   return (
     <div className={cn("flex flex-col gap-3", className)}>
       <div className="relative w-full" style={{ height: size }}>
-        <ResponsiveContainer width="100%" height="100%">
+        <MeasuredResponsiveContainer className="size-full">
           <PieChart>
             <Pie
               data={data}
@@ -53,7 +54,7 @@ function DonutTotal({
               ))}
             </Pie>
           </PieChart>
-        </ResponsiveContainer>
+        </MeasuredResponsiveContainer>
         <div className="absolute inset-0 grid place-items-center pointer-events-none">
           <div className="flex flex-col items-center">
             {sublabel && (

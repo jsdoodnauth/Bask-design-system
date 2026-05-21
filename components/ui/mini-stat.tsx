@@ -3,12 +3,13 @@
 import * as React from "react"
 import { ArrowUpRight, ArrowDownRight } from "lucide-react"
 import {
-  AreaChart, Area, ResponsiveContainer, BarChart, Bar,
+  AreaChart, Area, BarChart, Bar,
 } from "recharts"
 
 import { cn } from "@/lib/utils"
 import { useBaskTilt } from "@/lib/motion/bask-motion-provider"
 import { Badge } from "@/components/ui/badge"
+import { MeasuredResponsiveContainer } from "@/components/ui/chart"
 import type { StatTint } from "@/components/ui/stat"
 
 const TINT_BG: Record<StatTint, string> = {
@@ -100,7 +101,7 @@ function MiniStat({
         </div>
         {data.length > 0 && (
           <div className="w-[88px] h-[40px] flex-none">
-            <ResponsiveContainer width="100%" height="100%">
+            <MeasuredResponsiveContainer className="size-full">
               {spark === "area" ? (
                 <AreaChart data={data} margin={{ top: 2, right: 0, bottom: 0, left: 0 }}>
                   <defs>
@@ -123,7 +124,7 @@ function MiniStat({
                   <Bar dataKey="v" fill={stroke} radius={[2, 2, 0, 0]} isAnimationActive={false} />
                 </BarChart>
               )}
-            </ResponsiveContainer>
+            </MeasuredResponsiveContainer>
           </div>
         )}
       </div>
